@@ -1,6 +1,12 @@
 /* reduce.c */
 /************/
 
+/* This is a modified version of the program 'reduce.c' by N. Robertson,
+   D. P. Sanders, P. D. Seymour and R. Thomas. Modifications by
+   J.P. Steinberger, June 2008.
+   Modified lines are ended by a comment of the form `// jps'. 
+   The original header follows below:
+
 /* This is part I of two programs that serve as supplements to the paper `The
  * Four-Colour Theorem' by N. Robertson, D. P. Sanders, P. D. Seymour and R.
  * Thomas. Please refer to the manuscript `Reducibility in the Four-Color
@@ -11,11 +17,11 @@
 
 /* Version 1,  8 May 1995 */
 
-#define VERTS   27	/* max number of vertices in a free completion + 1 */
+#define VERTS   30	/* max number of vertices in a free completion + 1 */ // jps
 #define DEG     13	/* max degree of a vertex in a free completion + 1 */
 			/* must be at least 13 because of row 0            */
-#define EDGES   62	/* max number of edges in a free completion + 1    */
-#define MAXRING 14	/* max ring-size */
+#define EDGES   70	/* max number of edges in a free completion + 1    */ // jps
+#define MAXRING 16	/* max ring-size */ // jps
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -26,7 +32,7 @@ typedef long tp_edgeno[EDGES][EDGES];
 /* function prototypes */
 #ifdef PROTOTYPE_MAX
 void testmatch(long, char *, long[], char *, long);
-void augment(long, long[], long, long **, long[16][16][4], char *, char *, long *, long, long, long, char *, long *, long);
+void augment(long, long[], long, long **, long[MAXRING+1][MAXRING+1][4], char *, char *, long *, long, long, long, char *, long *, long); // jps
 void checkreality(long, long **, char *, char *, long *, long, long, long, char *, long *, long);
 long stillreal(long, long[], long, char *, long);
 long updatelive(char *, long, long *);
@@ -63,12 +69,12 @@ main(argc, argv)
 int argc;
 char *argv[];
 {
-   long ring, nlive, ncodes, i, nchar, count, power[17], contract[EDGES + 1];
+   long ring, nlive, ncodes, i, nchar, count, power[MAXRING + 2], contract[EDGES + 1]; // jps
    tp_angle angle, diffangle, sameangle;
    tp_confmat graph;
    char *live, *real, *s;
    FILE *fp;
-   static long simatchnumber[] = {0L, 0L, 1L, 3L, 10L, 30L, 95L, 301L, 980L, 3228L, 10797L, 36487L, 124542L, 428506L, 1485003L};
+   static long simatchnumber[] = {0L, 0L, 1L, 3L, 10L, 30L, 95L, 301L, 980L, 3228L, 10797L, 36487L, 124542L, 428506L, 1485003L, 5178161L,  18155816L}; // jps
 
    if (argc < 2)
       s = "unavoidable.conf";
@@ -80,7 +86,7 @@ char *argv[];
       exit(1);
    }
    power[1] = 1;
-   for (i = 2; i < 17; i++)
+   for (i = 2; i <= MAXRING + 1; i++) // jps
       power[i] = 3 * power[i - 1];	/* power[i] = 3^(i-1) for i>0 */
    ncodes = (power[MAXRING] + 1) / 2;	/* max number of codes */
    live = (char *) malloc(ncodes * sizeof(char));
@@ -142,7 +148,7 @@ char *live, *real;
  * in the bits of the characters of "real". */
 {
    long a, b, n, interval[10], *weight[8], nreal;
-   long matchweight[16][16][4], *mw, realterm;
+   long matchweight[MAXRING + 1][MAXRING + 1][4], *mw, realterm; // jps
    char bit;
 
    nreal = 0;
@@ -186,7 +192,6 @@ char *live, *real;
 	 mw[1] = power[a] - power[b];
 	 mw[2] = -power[a] - power[b];
 	 mw[3] = -power[a] - 2 * power[b];
-
       }
    for (b = 1; b < ring; b++) {
       n = 0;
@@ -209,8 +214,8 @@ char *live, *real;
 
 void
 augment(n, interval, depth, weight, matchweight, live, real, pnreal, ring, basecol, on, pbit, prealterm, nchar)
-long n, interval[10], depth, *weight[8], matchweight[16][16][4], *pnreal, ring,
- basecol, on, *prealterm, nchar;
+long n, interval[10], depth, *weight[8], matchweight[MAXRING + 1][MAXRING + 1][4], *pnreal, ring, // jps
+basecol, on, *prealterm, nchar;
 char *live, *real, *pbit;
 
 /* Finds all matchings such that every match is from one of the given
@@ -313,8 +318,8 @@ char *live;
  * "live", and, if so, records that fact on the bits of the corresponding
  * entries of "live". */
 {
-   long sum[64], mark, i, j, twopower, b, c;
-   long twisted[64], ntwisted, untwisted[64], nuntwisted;
+   long sum[128], mark, i, j, twopower, b, c; // jps
+   long twisted[128], ntwisted, untwisted[128], nuntwisted; // jps
 
    ntwisted = nuntwisted = 0;
    if (col < 0) {
@@ -411,7 +416,6 @@ tp_edgeno edgeno;
    long d, h, u, v, w, x, verts, ring, term, maxint, maxes, max[VERTS];
    long inter, maxdeg, best, first, previous, *grav, done[VERTS];
 
-
    for (u = 1; u < VERTS; u++)
       for (v = 1; v < VERTS; v++)
 	 edgeno[u][v] = 0;
@@ -434,6 +438,7 @@ tp_edgeno edgeno;
 	 if (done[v])
 	    continue;
 	 inter = ininterval(graph[v], done);
+
 	 if (inter > maxint) {
 	    maxint = inter;
 	    maxes = 1;
@@ -443,6 +448,7 @@ tp_edgeno edgeno;
       }	/* for v bracket */
       /* From the terms in max we choose the one of maximum degree */
       maxdeg = 0;
+
       for (h = 1; h <= maxes; h++) {
 	 d = graph[max[h]][0];
 	 if (d > maxdeg) {
@@ -514,7 +520,6 @@ tp_edgeno edgeno;
 long
 ininterval(grav, done)
 long grav[], done[];
-
 /* if grav meets the done vertices in an interval of length >=1, it returns
  * the length of the interval, and otherwise returns 0 */
 {
@@ -593,7 +598,7 @@ long contract[];
       contract[edgeno[u][v]] = 1;
    }
    for (i = 1; i <= graph[0][1]; i++)
-      if (contract[i]) {
+     if (contract[i]) {
 	 (void) printf("         ***  ERROR: CONTRACT IS NOT SPARSE  ***\n\n");
 	 exit(21);
       }
@@ -723,7 +728,6 @@ checkcontract(live, nlive, diffangle, sameangle, contract, power)
 tp_angle diffangle, sameangle;
 long nlive, contract[EDGES + 1], power[];
 char *live;
-
 /* checks that no colouring in live is the restriction to E(R) of a
  * tri-coloring of the free extension modulo the specified contract */
 {

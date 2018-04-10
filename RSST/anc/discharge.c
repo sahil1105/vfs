@@ -1,6 +1,12 @@
 /* discharge.c */
 /***************/
 
+/* This is a modified version of the program 'discharge.c' by N. Robertson,
+   D. P. Sanders, P. D. Seymour and R. Thomas. Modifications by
+   J.P. Steinberger, June 2008.
+   Modified lines are ended by a comment of the form `// jps'. 
+   The original header follows below:
+
 /* This is part II of two programs that serve as supplements to the paper
  * `The Four-Colour Theorem' by N. Robertson, D. P. Sanders, P. D. Seymour
  * and R. Thomas. Please refer to the manuscript `Discharging Cartwheels' by
@@ -15,22 +21,22 @@
 #include <stdlib.h>
 
 /* constants */
-#define VERTS      27	/* max number of vertices in a free completion + 1 */
+#define VERTS      40	/* max number of vertices in a free completion + 1 */ // jps
 #define DEG        13	/* max degree of a vertex in a free completion + 1 */
 /* must be at least 13 because of row 0            */
-#define CONFS      640	/* max number of configurations	 */
+#define CONFS      4000	/* max number of configurations	 */ // jps
 #define MAXVAL     12
 #define CARTVERT   5*MAXVAL+2	/* domain of l_A, u_A, where A is an axle */
-#define RULEFILE   "rules"	/* file containing rules */
-#define UNAVSET    "unavoidable.conf"	/* file containing unav set */
+char    RULEFILE[99];           /* file containing rules */     // jps (used to be defined as "rules", now entered on command line)
+char    UNAVSET[99];            /* file containing unav set */  // jps (used to be defined as "unavoidable.conf", now entered on command line)
 #define OUTLETFILE "outlet.et"	/* outlets will be written into this file */
 #define INFTY      12	/* the "12" in the definition of limited part  */
-#define MAXOUTLETS 110	/* max number of outlets */
+#define MAXOUTLETS 500	/* max number of outlets */ // jps
 #define MAXSTR     256	/* max length of an input string */
 #define MAXSYM     50	/* max number of symmetries */
 #define MAXELIST   134	/* length of edgelist[a][b] */
 #define MAXASTACK  5	/* max height of Astack (see "Reduce") */
-#define MAXLEV     12	/* max level of an input line + 1 */
+#define MAXLEV     17	/* max level of an input line + 1 */ // jps
 
 /* print modes */
 #define PRTALL  4	/* maximum information */
@@ -59,9 +65,9 @@ typedef struct {
    int number;	/* +/-n for outlet corresponding to rule n, always !=0 */
    int nolines;	/* |M(T)| */
    int value;
-   int pos[17];
-   int low[17];
-   int upp[17];
+   int pos[25]; // jps
+   int low[25]; // jps
+   int upp[25]; // jps
 } tp_outlet;
 typedef struct {
    int n;
@@ -164,8 +170,8 @@ char *av[];
    char *ch;
 
    printmode = prtline = 0;
-   if (ac < 2) {
-      (void) fprintf(stderr, "Usage: %s <filename> [<lineno> <print mode>]\n", av[0]);
+   if (ac < 4) { // jps
+      (void) fprintf(stderr, "Usage: %s <presentation file> <configuration file> <rule file> [<lineno> <print mode>]\n", av[0]);
       (void) fprintf(stderr, "If lineno is given and is positive will print details about that line.\n");
       (void) fprintf(stderr, "If lineno is 0 will print details about all lines. ");
       (void) fprintf(stderr, "Print modes are:\n");
@@ -178,17 +184,23 @@ char *av[];
       (void) fflush(stderr);
       (void) fgets(str, sizeof(str), stdin);
       (void) strcpy(fname, "present7");
-      (void) sscanf(str, "%s%d%d", fname, &prtline, &printmode);
+      (void) strcpy(UNAVSET, "unavoidable.conf");                   // jps
+      (void) strcpy(RULEFILE, "rules");                             // jps
+      // (void) sscanf(str, "%s%d%d", fname, &prtline, &printmode); // jps
+      (void) sscanf(str, "%s%s%s%d%d", fname, UNAVSET, RULEFILE, &prtline, &printmode); // jps
+      
    } else {
-      if (ac >= 4) {
-	 prtline = atoi(av[2]);
-	 printmode = atoi(av[3]);
+      if (ac >= 6) {
+	 prtline = atoi(av[4]);
+	 printmode = atoi(av[5]);
       }
       (void) strcpy(fname, av[1]);
+      (void) strcpy(UNAVSET, av[2]);                   // jps
+      (void) strcpy(RULEFILE, av[3]);                  // jps
    }
 
    (void) Getstring(fname);	/* to open presentation file */
-   (void) printf("Verifying %s\n", fname);
+   (void) printf("Verifying %s with configuration file %s and rule file %s\n", fname, UNAVSET, RULEFILE);  // jps
    (void) fflush(stdout);
    if (prtline == 0)
       print = printmode;
@@ -1457,11 +1469,13 @@ tp_outlet outlet[];
 {
    char line[512], *ch, s[64];
    int lineno, n, nouts, number, i, norules;
-   int z[17], b[17];	/* input data */
+   int z[29], b[29];	/* input data */ // jps
    tp_outlet *T;
    FILE *F;
-   static int U[] = {0, 0, 0, 1, 0, 3, 2, 1, 4, 3, 8, 3, 0, 0, 5, 6, 15};
-   static int V[] = {0, 0, 1, 0, 2, 0, 1, 3, 2, 5, 2, 9, 4, 12, 0, 1, 1};
+
+   //                0  1  2  3  4  5  6  7  8  9 10 11 12  13 14 15  16  17  18, 19, 20, 21, 22, 23  24  25  26  27  28 
+   static int U[] = {0, 0, 0, 1, 0, 3, 2, 1, 4, 3, 8, 3, 0,  0, 5, 6, 15,  0,  7, 14, 19,  2,  1,  1,  1,  3, 16, 20,  3}; // jps (see manuscript 'discharging cartwheels' p.8 by
+   static int V[] = {0, 0, 1, 0, 2, 0, 1, 3, 2, 5, 2, 9, 4, 12, 0, 1,  1, 13,  3,  0,  0,  6,  7, 22, 23, 17,  1,  0, 25}; // jps  Robertson et al. for the meaning of these arrays.)
 
    /* See the last paragraph of [D, Section 2]. */
 
@@ -1508,11 +1522,11 @@ tp_outlet outlet[];
 	 ++lineno;
 	 for (ch = line; *ch == ' ' || *ch == '\t'; ++ch);
 	 for (n = 2; *ch != '\0' && *ch != '\n'; n++) {
-	    if (n > 16)
+	    if (n > 28) // jps
 	       Error("Too many vertices in a rule", lineno);
 	    if (sscanf(ch, "%d%d", z + n, b + n) != 2)
 	       Error("Syntax error in rule file", lineno);
-	    if (z[n] < 0 || z[n] > 16)
+	    if (z[n] < 0 || z[n] > 28) // jps
 	       Error("Illegal entry in rule file", lineno);
 	    for (i = 0; i < 2; i++) {
 	       for (; *ch >= '0' && *ch <= '9'; ch++);
@@ -1552,14 +1566,14 @@ tp_axle *A;
 int number, X[], Y[], z[], b[], lineno;
 tp_outlet *T;
 {
-   int i, j, k, phi[17], u, v, deg;
+   int i, j, k, phi[29], u, v, deg; // jps
    static tp_adjmat adjmat;
 
    Getadjmat(A, adjmat);
    deg = A->low[0];
    T->nolines = z[0] - 1;
    T->number = number;
-   for (i = 0; i < 17; i++)
+   for (i = 0; i < 29; i++) // jps
       phi[i] = -1;
    if (number > 0) {
       phi[0] = 1;
