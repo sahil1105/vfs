@@ -19,6 +19,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /* constants */
 #define VERTS      40	/* max number of vertices in a free completion + 1 */ // jps
@@ -88,7 +89,6 @@ typedef int tp_edgelist[12][9][MAXELIST];
 
 
 /* function prototypes */
-#ifdef PROTOTYPE_MAX
 void Error(char[], int);
 int Getstring(char[]);
 void CheckCondition(char *, tp_axle *, tp_outlet[], int *, int, int, int);
@@ -118,45 +118,14 @@ void AddToList(tp_edgelist, int, int, tp_vertices);
 int RootedSubConf(int[], tp_adjmat, tp_question, int[], int, int, int);
 int SubConf(tp_adjmat, int[], tp_question, tp_edgelist, int[]);
 
-#else
-void Error();
-int Getstring();
-void CheckCondition();
-void CheckSymmetry();
-void CheckHubcap();
-void CheckBound();
-int OutletForced();
-int OutletPermitted();
-int ReflForced();
-void PrintOutlet();
-int Reduce();
-void CheckIso();
-void CopyAxle();
-void PrintAxle();
-void Indent();
-void Radius();
-int GetConf();
-long ReadConf();
-void ReadErr();
-int ReadOutlets();
-int DoOutlet();
-void GetQuestion();
-void Getadjmat();
-void DoFan();
-void GetEdgelist();
-void AddToList();
-int RootedSubConf();
-int SubConf();
-
-#endif
-
 /**************************************************************************
        main
 Intializes, then reads input lines one by one and takes appropriate action
 ***************************************************************************/
-main(ac, av)
-int ac;
-char *av[];
+int
+main(int ac, char *av[])
+// int ac;
+// char *av[];
 {
    int lev;	/* level of line being processed */
    int deg;	/* degree of hub; constant throughout */
@@ -307,9 +276,9 @@ char *av[];
 Prints an error message and exits.
 *************************************************************************/
 void
-Error(message, lineno)
-char message[];
-int lineno;
+Error(char message[], int lineno)
+// char message[];
+// int lineno;
 {
    fflush(stdout);
    (void) fprintf(stderr, "%s on line %d\n", message, lineno);
@@ -324,8 +293,8 @@ a line from that file into str (at most MAXSTR characters), and returns
 the number of the line read.
 *************************************************************************/
 int
-Getstring(str)
-char str[];
+Getstring(char str[])
+// char str[];
 {
    static int lineno = 0;
    static FILE *fin = NULL;
@@ -351,14 +320,21 @@ char str[];
 Verifies condition line as described in [D]
 *************************************************************************/
 void
-CheckCondition(S, A, sym, pnosym, lev, lineno, print)
-int lev;	/* level of input line */
-int lineno;	/* number of input line */
-int *pnosym;	/* number of symmetries */
-tp_outlet sym[];	/* symmetries (see "main") */
-char *S;	/* input line */
-tp_axle *A;	/* called A_lev in [D] */
-int print;	/* print mode */
+CheckCondition(
+	char *S, /* level of input line */
+	tp_axle *A, /* number of input line */
+	tp_outlet sym[], /* number of symmetries */
+	int *pnosym, /* symmetries (see "main") */
+	int lev, /* input line */
+	int lineno, /* called A_lev in [D] */
+	int print /* print mode */)
+// int lev;
+// int lineno;
+// int *pnosym;
+// tp_outlet sym[];
+// char *S;
+// tp_axle *A;
+// int print;
 {
    int n, m, i, j, deg, good;
    static tp_cond cond[MAXLEV];
@@ -436,11 +412,16 @@ int print;	/* print mode */
 Verifies symmetry line as described in [D]
 *************************************************************************/
 void
-CheckSymmetry(S, A, sym, nosym, lineno)
-int nosym, lineno;
-char *S;	/* input line */
-tp_axle *A;
-tp_outlet sym[];
+CheckSymmetry(
+	char *S, /* input line */
+	tp_axle *A,
+	tp_outlet sym[],
+	int nosym,
+	int lineno)
+// int nosym, lineno;
+// char *S;	
+// tp_axle *A;
+// tp_outlet sym[];
 {
    int k, epsilon, level, line, i;
    tp_outlet *T;
@@ -475,10 +456,14 @@ verified for accuracy.
 If str!=NULL it verifies hubcap line as described in [D]
 **************************************************************************/
 void
-CheckHubcap(A, str, lineno, print)
-int lineno, print;
-tp_axle *A;
-char str[];	/* input line */
+CheckHubcap(
+	tp_axle *A,
+	char str[], /* input line */
+	int lineno,
+	int print)
+// int lineno, print;
+// tp_axle *A;
+// char str[];	
 {
    char *ch;
    int x[MAXVAL + 2], y[MAXVAL + 2], v[MAXVAL + 2];
@@ -605,10 +590,10 @@ char str[];	/* input line */
 Verifies (H1)
 *************************************************************************/
 void
-CheckBound(A, posout, s, maxch, pos, depth, lineno, print)
-int maxch, s[], pos, depth, lineno, print;
-tp_posout posout[];
-tp_axle *A;
+CheckBound(tp_axle *A, tp_posout posout[], int s[], int maxch, int pos, int depth, int lineno, int print)
+// int maxch, s[], pos, depth, lineno, print;
+// tp_posout posout[];
+// tp_axle *A;
 {
    int deg, i, p, x, good, forcedch, allowedch;
    int *sprime;
@@ -725,10 +710,10 @@ tp_axle *A;
 If (T,x) is enforced by A, then returns the value of T, otherwise 0
 *********************************************************************/
 int
-OutletForced(A, T, x)
-int x;
-tp_outlet *T;
-tp_axle *A;
+OutletForced(tp_axle *A, tp_outlet *T, int x)
+// int x;
+// tp_outlet *T;
+// tp_axle *A;
 {
    int i, p, deg;
 
@@ -748,10 +733,10 @@ tp_axle *A;
 If (T,x) is permitted by A, then returns the value of T, otherwise 0
 *********************************************************************/
 int
-OutletPermitted(A, T, x)
-int x;
-tp_outlet *T;
-tp_axle *A;
+OutletPermitted(tp_axle *A, tp_outlet *T, int x)
+// int x;
+// tp_outlet *T;
+// tp_axle *A;
 {
    int deg, i, p;
 
@@ -773,10 +758,10 @@ with A is compatible with tau^(x-1)sigma M, where M is the axle
 corresponding to T
 ************************************************************************/
 int
-ReflForced(A, T, x)
-int x;
-tp_outlet *T;
-tp_axle *A;
+ReflForced(tp_axle *A, tp_outlet *T, int x)
+// int x;
+// tp_outlet *T;
+// tp_axle *A;
 {
    int deg, i, p, q;
 
@@ -805,10 +790,10 @@ tp_axle *A;
 File F must be open for writing. Prints T into F.
 *********************************************************************/
 void
-PrintOutlet(n, F, T)
-int n;
-FILE *F;
-tp_outlet *T;
+PrintOutlet(int n, FILE *F, tp_outlet *T)
+// int n;
+// FILE *F;
+// tp_outlet *T;
 {
    int i;
 
@@ -828,9 +813,10 @@ tp_outlet *T;
  "redquestions" (i.e. questions corresponding to the unavoidable set)
  If A!=NULL it tests reducibility of A as described in [D]
 *********************************************************************/
-Reduce(A, lineno, print)
-int lineno, print;
-tp_axle *A;
+int 
+Reduce(tp_axle *A, int lineno, int print)
+// int lineno, print;
+// tp_axle *A;
 {
    int h, i, j, v, redring, redverts;
    static int naxles, noconf;
@@ -929,12 +915,11 @@ Verifies that image is an isomorphism between L and a well-positioned
 induced subconfiguration K of the skeleton of A
 *********************************************************************/
 void
-CheckIso(L, A, image, lineno)
-tp_confmat L;
-tp_axle *A;
-tp_vertices image;
-int lineno;
-
+CheckIso(tp_confmat L, tp_axle *A, tp_vertices image, int lineno)
+// tp_confmat L;
+// tp_axle *A;
+// tp_vertices image;
+// int lineno;
 {
    int i, u, v, w, x, y, fu, deg, worried, verts, ring, d, h, a, b, c,
     e;
@@ -1050,9 +1035,8 @@ int lineno;
 Copies B into A.
 *********************************************************************/
 void
-CopyAxle(A, B)
-tp_axle *A, *B;
-
+CopyAxle(tp_axle *A, tp_axle *B)
+// tp_axle *A, *B;
 {
    int j, deg5;
 
@@ -1069,9 +1053,8 @@ tp_axle *A, *B;
 Prints A on one line of stdout, followed by EOL
 *********************************************************************/
 void
-PrintAxle(A)
-tp_axle *A;
-
+PrintAxle(tp_axle *A)
+// tp_axle *A;
 {
    int i, deg;
 
@@ -1097,10 +1080,9 @@ tp_axle *A;
 Prints string s on stdout, indented by 2n positions.
 *********************************************************************/
 void
-Indent(n, s)
-int n;
-char s[];
-
+Indent(int n, char s[])
+// int n;
+// char s[];
 {
    int i;
 
@@ -1118,10 +1100,9 @@ Then adjmat[u][v]=w if u,v,w form a clockwise triangle in G, and
 adjmat[u][v]=-1 if w does not exist.
 *********************************************************************/
 void
-Getadjmat(A, adjmat)
-tp_axle *A;
-tp_adjmat adjmat;
-
+Getadjmat(tp_axle *A, tp_adjmat adjmat)
+// tp_axle *A;
+// tp_adjmat adjmat;
 {
    int deg, a, b, h, i;
 
@@ -1147,11 +1128,10 @@ tp_adjmat adjmat;
 	DoFan
 Does one fan of adjmat
 *********************************************************************/
-
 void
-DoFan(deg, i, k, adjmat)
-int deg, i, k;
-tp_adjmat adjmat;
+DoFan(int deg, int i, int k, tp_adjmat adjmat)
+// int deg, i, k;
+// tp_adjmat adjmat;
 {
    int a, b, c, d, e;
 
@@ -1198,8 +1178,8 @@ tp_adjmat adjmat;
 Prints an error message and exits if L does not have radius at most two.
 ************************************************************************/
 void
-Radius(L)
-tp_confmat L;
+Radius(tp_confmat L)
+// tp_confmat L;
 {
    int i, j, u, v, verts, ring;
    static tp_vertices reached;
@@ -1238,10 +1218,9 @@ a question for L and stores it in redquestions[i], and if conf!=NULL it
 stores L in conf[i].
 **********************************************************************/
 int
-GetConf(conf, redquestions)
-tp_confmat *conf;
-tp_question *redquestions;
-
+GetConf(tp_confmat *conf, tp_question *redquestions)
+// tp_confmat *conf;
+// tp_question *redquestions;
 {
    int noconf, nonull;
    tp_confmat *A;
@@ -1292,11 +1271,10 @@ A[i][j] (j=1,2,...,L[i][0]) are the neighbors of i in G listed in clockwise
 order. See `Reducibility in the Four-Color Theorem' for more details.
 *************************************************************************/
 long
-ReadConf(A, F, C)
-tp_confmat A;
-FILE *F;
-long *C;
-
+ReadConf(tp_confmat A, FILE *F, long *C)
+// tp_confmat A;
+// FILE *F;
+// long *C;
 {
    char S[256], *t, name[256];
    long d, i, j, k, n, r, a, p;
@@ -1440,9 +1418,9 @@ long *C;
 Prints an error message and exits
 ***********************************************************************/
 void
-ReadErr(n, name)
-int n;
-char name[];
+ReadErr(int n, char name[])
+// int n;
+// char name[];
 {
    (void) printf("Error %d while reading configuration %s\n", n, name);
    exit(57);
@@ -1463,9 +1441,9 @@ of outlets constructed. The array outlet must be already allocated and
 of size >=MAXOUTLET.
 *************************************************************************/
 int
-ReadOutlets(A, outlet)
-tp_axle *A;
-tp_outlet outlet[];
+ReadOutlets(tp_axle *A, tp_outlet outlet[])
+// tp_axle *A;
+// tp_outlet outlet[];
 {
    char line[512], *ch, s[64];
    int lineno, n, nouts, number, i, norules;
@@ -1473,9 +1451,14 @@ tp_outlet outlet[];
    tp_outlet *T;
    FILE *F;
 
-   //                0  1  2  3  4  5  6  7  8  9 10 11 12  13 14 15  16  17  18, 19, 20, 21, 22, 23  24  25  26  27  28 
-   static int U[] = {0, 0, 0, 1, 0, 3, 2, 1, 4, 3, 8, 3, 0,  0, 5, 6, 15,  0,  7, 14, 19,  2,  1,  1,  1,  3, 16, 20,  3}; // jps (see manuscript 'discharging cartwheels' p.8 by
-   static int V[] = {0, 0, 1, 0, 2, 0, 1, 3, 2, 5, 2, 9, 4, 12, 0, 1,  1, 13,  3,  0,  0,  6,  7, 22, 23, 17,  1,  0, 25}; // jps  Robertson et al. for the meaning of these arrays.)
+   static int U[] = {
+   //  0  1  2  3  4  5  6  7  8  9 10 11 12  13 14 15  16  17  18, 19, 20, 21, 22, 23  24  25  26  27  28 
+       0, 0, 0, 1, 0, 3, 2, 1, 4, 3, 8, 3, 0,  0, 5, 6, 15,  0,  7, 14, 19,  2,  1,  1,  1,  3, 16, 20,  3
+   }; // jps (see manuscript 'discharging cartwheels' p.8 by
+   static int V[] = {
+   //  0  1  2  3  4  5  6  7  8  9 10 11 12  13 14 15  16  17  18, 19, 20, 21, 22, 23  24  25  26  27  28 
+       0, 0, 1, 0, 2, 0, 1, 3, 2, 5, 2, 9, 4, 12, 0, 1,  1, 13,  3,  0,  0,  6,  7, 22, 23, 17,  1,  0, 25
+   }; // jps  Robertson et al. for the meaning of these arrays.)
 
    /* See the last paragraph of [D, Section 2]. */
 
@@ -1561,10 +1544,10 @@ whether r(T)=1 or r(T)=-1. The order of arguments X, Y determines sense
 (clockwise/counterclockwise).
 *********************************************************************/
 int
-DoOutlet(A, number, X, Y, z, b, T, lineno)
-tp_axle *A;
-int number, X[], Y[], z[], b[], lineno;
-tp_outlet *T;
+DoOutlet(tp_axle *A, int number, int X[], int Y[], int z[], int b[], tp_outlet *T, int lineno)
+// tp_axle *A;
+// int number, X[], Y[], z[], b[], lineno;
+// tp_outlet *T;
 {
    int i, j, k, phi[29], u, v, deg; // jps
    static tp_adjmat adjmat;
@@ -1635,10 +1618,9 @@ and Q[1].v to be the ring-size of L. Also sets Q[n+1].u=-1 to
 indicate end
 *********************************************************************/
 void
-GetQuestion(L, Q)
-tp_confmat L;
-tp_question Q;
-
+GetQuestion(tp_confmat L, tp_question Q)
+// tp_confmat L;
+// tp_question Q;
 {
    int nverts, max, ring, found[VERTS];
    int d, g, h, i, j, r, t, u, v, w, best, secondbest, nfound, search;
@@ -1736,11 +1718,9 @@ adjacent vertices u,v of the skeleton of A with degrees a,b, respectively
 such that either a<=8 or u=0.
 ***********************************************************************/
 void
-GetEdgelist(A, edgelist)
-tp_axle *A;
-tp_edgelist edgelist;
-
-
+GetEdgelist(tp_axle *A, tp_edgelist edgelist)
+// tp_axle *A;
+// tp_edgelist edgelist;
 {
    int a, b, c, d, e, h, i, deg;
 
@@ -1794,13 +1774,12 @@ tp_edgelist edgelist;
 	AddToList
 See "GetEdgeList" above.
 ***********************************************************************/
-void
-AddToList(edgelist, u, v, degree)
-tp_edgelist edgelist;
-int u, v;
-tp_vertices degree;
-
 /* adds the pair u,v to edgelist */
+void
+AddToList(tp_edgelist edgelist, int u, int v, tp_vertices degree)
+// tp_edgelist edgelist;
+// int u, v;
+// tp_vertices degree;
 {
    int a, b, *e;
 
@@ -1832,12 +1811,12 @@ tp_vertices degree;
 	RootedSubConf
 See "SubConf" below.
 ***********************************************************************/
-RootedSubConf(degree, adjmat, question, image, x, y, clockwise)
-int degree[], x, y, clockwise;
-tp_adjmat adjmat;
-tp_vertices image;
-tp_question question;
-
+int 
+RootedSubConf(int degree[], tp_adjmat adjmat, tp_question question, tp_vertices image, int x, int y, int clockwise)
+// int degree[], x, y, clockwise;
+// tp_adjmat adjmat;
+// tp_vertices image;
+// tp_question question;
 {
    int deg, j, w;
    static int used[CARTVERT];
@@ -1884,13 +1863,13 @@ of A. If not returns 0; otherwise returns 1, writes an isomorphism
 into image, and sets image[0] to 1 if the isomorphism is orientation-
 preserving, and 0 if it is orientation-reversing.
 ***********************************************************************/
-SubConf(adjmat, degree, question, edgelist, image)
-tp_adjmat adjmat;
-tp_vertices degree;
-tp_edgelist edgelist;
-tp_vertices image;
-tp_question question;
-
+int
+SubConf(tp_adjmat adjmat, tp_vertices degree, tp_question question, tp_edgelist edgelist, tp_vertices image)
+// tp_adjmat adjmat;
+// tp_vertices degree;
+// tp_edgelist edgelist;
+// tp_vertices image;
+// tp_question question;
 {
    int i, x, y, *pedge;
 

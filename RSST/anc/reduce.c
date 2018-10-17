@@ -22,6 +22,7 @@
 			/* must be at least 13 because of row 0            */
 #define EDGES   70	/* max number of edges in a free completion + 1    */ // jps
 #define MAXRING 16	/* max ring-size */ // jps
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -30,7 +31,6 @@ typedef long tp_angle[EDGES][5];
 typedef long tp_edgeno[EDGES][EDGES];
 
 /* function prototypes */
-#ifdef PROTOTYPE_MAX
 void testmatch(long, char *, long[], char *, long);
 void augment(long, long[], long, long **, long[MAXRING+1][MAXRING+1][4], char *, char *, long *, long, long, long, char *, long *, long); // jps
 void checkreality(long, long **, char *, char *, long *, long, long, long, char *, long *, long);
@@ -46,28 +46,10 @@ void record(long[], long[], long, long[][5], char *, long *, long);
 long inlive(long[], long[], long, char *, long);
 long ReadConf(tp_confmat, FILE *, long *);
 void ReadErr(int, char[]);
-#else
-void testmatch();
-void augment();
-void checkreality();
-long stillreal();
-long updatelive();
-void strip();
-long ininterval();
-void findangles();
-long findlive();
-void checkcontract();
-void printstatus();
-void record();
-long inlive();
-long ReadConf();
-void ReadErr();
-#endif
 
 
-main(argc, argv)
-int argc;
-char *argv[];
+int
+main(int argc, char *argv[])
 {
    long ring, nlive, ncodes, i, nchar, count, power[MAXRING + 2], contract[EDGES + 1]; // jps
    tp_angle angle, diffangle, sameangle;
@@ -138,14 +120,11 @@ char *argv[];
 }
 
 
-void
-testmatch(ring, real, power, live, nchar)
-long ring, power[], nchar;
-char *live, *real;
-
 /* This generates all balanced signed matchings, and for each one, tests
  * whether all associated colourings belong to "live". It writes the answers
  * in the bits of the characters of "real". */
+void
+testmatch(long ring, char *real, long power[], char *live, long nchar)
 {
    long a, b, n, interval[10], *weight[8], nreal;
    long matchweight[MAXRING + 1][MAXRING + 1][4], *mw, realterm; // jps
@@ -212,17 +191,27 @@ char *live, *real;
    (void) fflush(stdout);
 }
 
-void
-augment(n, interval, depth, weight, matchweight, live, real, pnreal, ring, basecol, on, pbit, prealterm, nchar)
-long n, interval[10], depth, *weight[8], matchweight[MAXRING + 1][MAXRING + 1][4], *pnreal, ring, // jps
-basecol, on, *prealterm, nchar;
-char *live, *real, *pbit;
-
 /* Finds all matchings such that every match is from one of the given
  * intervals. (The intervals should be disjoint, and ordered with smallest
  * first, and lower end given first.) For each such matching it examines all
  * signings of it, and adjusts the corresponding entries in "real" and
  * "live". */
+void
+augment(
+	long n,
+	long interval[10],
+	long depth,
+	long *weight[8],
+	long matchweight[MAXRING + 1][MAXRING + 1][4],
+	char *live,
+	char *real,
+	long *pnreal,
+	long ring,
+	long basecol,
+	long on,
+	char *pbit,
+	long *prealterm,
+	long nchar)
 {
    long h, i, j, r, newinterval[10], newn, lower, upper;
 
@@ -254,17 +243,25 @@ char *live, *real, *pbit;
 }
 
 
-void
-checkreality(depth, weight, live, real, pnreal, ring, basecol, on, pbit, prealterm, nchar)
-long depth, *weight[8], *pnreal, ring, basecol, on, *prealterm, nchar;
-char *live, *real, *pbit;
-
 /* For a given matching M, it runs through all signings, and checks which of
  * them have the property that all associated colourings belong to "live". It
  * writes the answers into bits of "real", starting at the point specified by
  * "bit" and "realterm". "basecol" is for convenience in computing the
  * associated colourings; it is zero for matchings not incident with "ring".
  * "on" is nonzero iff the matching is incident with "ring". */
+void
+checkreality(
+	long depth,
+	long *weight[8],
+	char *live,
+	char *real,
+	long *pnreal,
+	long ring,
+	long basecol,
+	long on,
+	char *pbit,
+	long *prealterm,
+	long nchar)
 {
    long i, k, nbits, choice[8], col, parity;
    unsigned long left;
@@ -309,14 +306,11 @@ char *live, *real, *pbit;
 }
 
 
-long
-stillreal(col, choice, depth, live, on)
-long col, choice[8], depth, on;
-char *live;
-
 /* Given a signed matching, this checks if all associated colourings are in
  * "live", and, if so, records that fact on the bits of the corresponding
  * entries of "live". */
+long
+stillreal(long col, long choice[8], long depth, char *live, long on)
 {
    long sum[128], mark, i, j, twopower, b, c; // jps
    long twisted[128], ntwisted, untwisted[128], nuntwisted; // jps
@@ -369,14 +363,11 @@ char *live;
 }
 
 
-long
-updatelive(live, ncols, p)
-long *p, ncols;
-char *live;
-
 /* runs through "live" to see which colourings still have `real' signed
  * matchings sitting on all three pairs of colour classes, and updates "live"
  * accordingly; returns 1 if nlive got smaller and stayed >0, and 0 otherwise */
+long
+updatelive(char *live, long ncols, long *p)
 {
    long i, nlive, newnlive;
 
@@ -404,14 +395,11 @@ char *live;
    return ((long) 0);
 }
 
-void
-strip(graph, edgeno)
-tp_confmat graph;
-tp_edgeno edgeno;
-
 /* Numbers edges from 1 up, so that each edge has as many later edges in
  * triangles as possible; the ring edges are first.  edgeno[u][v] will be the
  * number of the edge with ends u,v if there is such an edge and 0 otherwise. */
+void
+strip(tp_confmat graph, tp_edgeno edgeno)
 {
    long d, h, u, v, w, x, verts, ring, term, maxint, maxes, max[VERTS];
    long inter, maxdeg, best, first, previous, *grav, done[VERTS];
@@ -517,11 +505,10 @@ tp_edgeno edgeno;
 }
 
 
-long
-ininterval(grav, done)
-long grav[], done[];
 /* if grav meets the done vertices in an interval of length >=1, it returns
  * the length of the interval, and otherwise returns 0 */
+long
+ininterval(long grav[], long done[])
 {
    long d, j, first, last, worried, length;
 
@@ -551,18 +538,14 @@ long grav[], done[];
    return (length);
 }
 
-void
-findangles(graph, angle, diffangle, sameangle, contract)
-tp_confmat graph;
-tp_angle angle,diffangle,sameangle;
-long contract[];
-
 /* writes into angle[i] all edges with number >i on a common triangle T say
  * with edge i; and if there is a contract X given, and i is not in X, writes
  * into diffangle[i] all such edges such that no edge of T is in X, and
  * writes into sameangle[i] all such edges not in X so that the third edge of
  * T is in X. Sets contract[i] to 1 if edge number i is in X and to zero
  * otherwise, checks that X is sparse, and if |X|=4 checks that X has a triad */
+void
+findangles(tp_confmat graph, tp_angle angle, tp_angle diffangle, tp_angle sameangle, long contract[])
 {
 
    long a, b, c, h, i, j, u, v, w, edges;
@@ -670,16 +653,11 @@ long contract[];
 }
 
 
-long
-findlive(live, ncodes, angle, power, extentclaim)
-long ncodes, power[], extentclaim;
-tp_angle angle;
-char *live;
-
 /* computes {\cal C}_0 and stores it in live. That is, computes codes of
  * colorings of the ring that are not restrictions of tri-colorings of the
  * free extension. Returns the number of such codes */
-
+long
+findlive(char *live, long ncodes, tp_angle angle, long power[], long extentclaim)
 {
    long j, c[EDGES], i, u, *am;
    long edges, ring, extent, bigno;
@@ -723,13 +701,10 @@ char *live;
    }
 }
 
-void
-checkcontract(live, nlive, diffangle, sameangle, contract, power)
-tp_angle diffangle, sameangle;
-long nlive, contract[EDGES + 1], power[];
-char *live;
 /* checks that no colouring in live is the restriction to E(R) of a
  * tri-coloring of the free extension modulo the specified contract */
+void
+checkcontract(char *live, long nlive, tp_angle diffangle, tp_angle sameangle, long contract[EDGES + 1], long power[])
 {
    long j, c[EDGES], i, u, *dm, *sm;
    long ring, bigno;
@@ -811,11 +786,11 @@ char *live;
 }
 
 void
-printstatus(ring, totalcols, extent, extentclaim)
-long ring, totalcols, extent, extentclaim;
-
+printstatus(long ring, long totalcols, long extent, long extentclaim)
 {
-   static long simatchnumber[] = {0L, 0L, 1L, 3L, 10L, 30L, 95L, 301L, 980L, 3228L, 10797L, 36487L, 124542L, 428506L, 1485003L};
+   static long simatchnumber[] = {
+       0L, 0L, 1L, 3L, 10L, 30L, 95L, 301L, 980L, 3228L, 10797L, 36487L, 124542L, 428506L, 1485003L
+   };
 
    (void) printf("\n\n   This has ring-size %ld, so there are %ld colourings total,\n",ring, totalcols);
    (void) printf("   and %ld balanced signed matchings.\n",simatchnumber[ring]);
@@ -831,14 +806,10 @@ long ring, totalcols, extent, extentclaim;
    (void) fflush(stdout);
 }
 
-void
-record(col, power, ring, angle, live, p, bigno)
-long col[], power[], ring, angle[][5], *p, bigno;
-char *live;
-
 /* Given a colouring specified by a 1,2,4-valued function "col", it computes
  * the corresponding number, checks if it is in live, and if so removes it. */
-
+void
+record(long col[], long power[], long ring, long angle[][5], char *live, long *p, long bigno)
 {
    long weight[5], colno, sum, i, min, max, w;
 
@@ -863,13 +834,10 @@ char *live;
    }
 }
 
-long
-inlive(col, power, ring, live, bigno)
-long col[], power[], ring, bigno;
-char *live;
-
 /* Same as "record" above, except now it returns whether the colouring is in
  * live, and does not change live. */
+long
+inlive(long col[], long power[], long ring, char *live, long bigno)
 {
    long weight[5], colno, i, min, max, w;
 
@@ -890,14 +858,10 @@ char *live;
 }
 
 
-long
-ReadConf(A, F, C)
-tp_confmat A;
-FILE *F;
-long *C;
-
 /* Reads one graph from file F and stores in A, if C!=NULL puts coordinates
  * there. If successful returns 0, on end of file returns 1, if error exits. */
+long
+ReadConf(tp_confmat A, FILE *F, long *C)
 {
    char S[256], *t, name[256];
    long d, i, j, k, n, r, a, p;
@@ -1037,12 +1001,12 @@ long *C;
 }/* ReadConf */
 
 void
-ReadErr(n, name)
-int n;
-char name[];
+ReadErr(int n, char name[])
 {
    (void) printf("Error %d while reading configuration %s\n", n, name);
    exit(57);
 }
 
 /* End of file reduce.c */
+
+/* vim: set ts=8: */
