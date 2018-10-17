@@ -145,69 +145,75 @@ main(int argc, char *argv[])
 void
 testmatch(long ring, char *real, long power[], char *live, long nchar)
 {
-   long a, b, n, interval[10], *weight[8], nreal;
-   long matchweight[MAXRING + 1][MAXRING + 1][4], *mw, realterm; // jps
-   char bit;
+    long a, b, n, interval[10], *weight[8], nreal;
+    long matchweight[MAXRING + 1][MAXRING + 1][4], *mw, realterm; // jps
+    char bit;
 
-   nreal = 0;
-   /* "nreal" will be the number of balanced signed matchings such that all
-    * associated colourings belong to "live"; ie the total number of nonzero
-    * bits in the entries of "real" */
-   bit = 1;
-   realterm = 0;
-   /* First, it generates the matchings not incident with the last ring edge */
+    /* "nreal" will be the number of balanced signed matchings such that all
+     * associated colourings belong to "live"; ie the total number of nonzero
+     * bits in the entries of "real" */
+    nreal = 0;
+    bit = 1;
+    realterm = 0;
 
-   for (a = 2; a <= ring; a++)
-      for (b = 1; b < a; b++) {
-	 mw = matchweight[a][b];
-	 mw[0] = 2 * (power[a] + power[b]);
-	 mw[1] = 2 * (power[a] - power[b]);
-	 mw[2] = power[a] + power[b];
-	 mw[3] = power[a] - power[b];
-      }
-   for (a = 2; a < ring; a++)
-      for (b = 1; b < a; b++) {
-	 n = 0;
-	 weight[1] = matchweight[a][b];
-	 if (b >= 3) {
-	    n = 1;
-	    interval[1] = 1;
-	    interval[2] = b - 1;
-	 }
-	 if (a >= b + 3) {
-	    n++;
-	    interval[2 * n - 1] = b + 1;
-	    interval[2 * n] = a - 1;
-	 }
-	 augment(n, interval, (long) 1, weight, matchweight, live, real, &nreal, ring, (long) 0, (long) 0, &bit, &realterm, nchar);
-      }
+    /* First, it generates the matchings not incident with the last ring edge */
+    for (a = 2; a <= ring; a++) {
+        for (b = 1; b < a; b++) {
+            mw = matchweight[a][b];
+            mw[0] = 2 * (power[a] + power[b]);
+            mw[1] = 2 * (power[a] - power[b]);
+            mw[2] = power[a] + power[b];
+            mw[3] = power[a] - power[b];
+        }
+    }
 
-   /* now, the matchings using an edge incident with "ring" */
-   for (a = 2; a <= ring; a++)
-      for (b = 1; b < a; b++) {
-	 mw = matchweight[a][b];
-	 mw[0] = power[a] + power[b];
-	 mw[1] = power[a] - power[b];
-	 mw[2] = -power[a] - power[b];
-	 mw[3] = -power[a] - 2 * power[b];
-      }
-   for (b = 1; b < ring; b++) {
-      n = 0;
-      weight[1] = matchweight[ring][b];
-      if (b >= 3) {
-	 n = 1;
-	 interval[1] = 1;
-	 interval[2] = b - 1;
-      }
-      if (ring >= b + 3) {
-	 n++;
-	 interval[2 * n - 1] = b + 1;
-	 interval[2 * n] = ring - 1;
-      }
-      augment(n, interval, (long) 1, weight, matchweight, live, real, &nreal, ring, (power[ring + 1] - 1) / 2, (long) 1, &bit, &realterm, nchar);
-   }
-   (void) printf("               %ld\n", nreal);
-   (void) fflush(stdout);
+    for (a = 2; a < ring; a++) {
+        for (b = 1; b < a; b++) {
+            n = 0;
+            weight[1] = matchweight[a][b];
+            if (b >= 3) {
+                n = 1;
+                interval[1] = 1;
+                interval[2] = b - 1;
+            }
+            if (a >= b + 3) {
+                n++;
+                interval[2 * n - 1] = b + 1;
+                interval[2 * n] = a - 1;
+            }
+            augment(n, interval, (long) 1, weight, matchweight, live, real, &nreal, ring, (long) 0, (long) 0, &bit, &realterm, nchar);
+        }
+    }
+
+    /* now, the matchings using an edge incident with "ring" */
+    for (a = 2; a <= ring; a++) {
+        for (b = 1; b < a; b++) {
+            mw = matchweight[a][b];
+            mw[0] = power[a] + power[b];
+            mw[1] = power[a] - power[b];
+            mw[2] = -power[a] - power[b];
+            mw[3] = -power[a] - 2 * power[b];
+        }
+    }
+
+    for (b = 1; b < ring; b++) {
+        n = 0;
+        weight[1] = matchweight[ring][b];
+        if (b >= 3) {
+            n = 1;
+            interval[1] = 1;
+            interval[2] = b - 1;
+        }
+        if (ring >= b + 3) {
+            n++;
+            interval[2 * n - 1] = b + 1;
+            interval[2 * n] = ring - 1;
+        }
+        augment(n, interval, (long) 1, weight, matchweight, live, real, &nreal, ring, (power[ring + 1] - 1) / 2, (long) 1, &bit, &realterm, nchar);
+    }
+
+    (void) printf("               %ld\n", nreal);
+    (void) fflush(stdout);
 }
 
 /* Finds all matchings such that every match is from one of the given
