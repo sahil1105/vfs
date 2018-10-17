@@ -4,6 +4,11 @@
 # TODO: Fix whitespace/indentation
 # (three-space indent? mixed tabs/spaces? seems legit.)
 
+# Running time of reduce.c:
+# real	4m51.547s
+# user  4m24.004s
+# sys	0m2.470s
+
 CFLAGS="-Wall -Wextra -Wundef -Wold-style-definition -Wstrict-prototypes -Wpedantic --std=c99"
 
 build() {
