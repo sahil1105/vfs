@@ -223,48 +223,49 @@ testmatch(long ring, char *real, long power[], char *live, long nchar)
  * "live". */
 void
 augment(
-	long n,
-	long interval[10],
-	long depth,
-	long *weight[8],
-	long matchweight[MAXRING + 1][MAXRING + 1][4],
-	char *live,
-	char *real,
-	long *pnreal,
-	long ring,
-	long basecol,
-	long on,
-	char *pbit,
-	long *prealterm,
-	long nchar)
+    long n,
+    long interval[10],
+    long depth,
+    long *weight[8],
+    long matchweight[MAXRING + 1][MAXRING + 1][4],
+    char *live,
+    char *real,
+    long *pnreal,
+    long ring,
+    long basecol,
+    long on,
+    char *pbit,
+    long *prealterm,
+    long nchar)
 {
-   long h, i, j, r, newinterval[10], newn, lower, upper;
+    long h, i, j, r, newinterval[10], newn, lower, upper;
 
-   checkreality(depth, weight, live, real, pnreal, ring, basecol, on, pbit, prealterm, nchar);
-   depth++;
-   for (r = 1; r <= n; r++) {
-      lower = interval[2 * r - 1];
-      upper = interval[2 * r];
-      for (i = lower + 1; i <= upper; i++)
-	 for (j = lower; j < i; j++) {
-	    weight[depth] = matchweight[i][j];
-	    for (h = 1; h < 2 * r - 1; h++)
-	       newinterval[h] = interval[h];
-	    newn = r - 1;
-	    if (j > lower + 1) {
-	       newn++;
-	       newinterval[h++] = lower;
-	       newinterval[h++] = j - 1;
-	    }
-	    if (i > j + 1) {
-	       newn++;
-	       newinterval[h++] = j + 1;
-	       newinterval[h++] = i - 1;
-	    }
-	    augment(newn, newinterval, depth, weight, matchweight, live,
-		    real, pnreal, ring, basecol, on, pbit, prealterm, nchar);
-	 }
-   }
+    checkreality(depth, weight, live, real, pnreal, ring, basecol, on, pbit, prealterm, nchar);
+    depth++;
+    for (r = 1; r <= n; r++) {
+        lower = interval[2 * r - 1];
+        upper = interval[2 * r];
+        for (i = lower + 1; i <= upper; i++) {
+            for (j = lower; j < i; j++) {
+                weight[depth] = matchweight[i][j];
+                for (h = 1; h < 2 * r - 1; h++)
+                    newinterval[h] = interval[h];
+                newn = r - 1;
+                if (j > lower + 1) {
+                    newn++;
+                    newinterval[h++] = lower;
+                    newinterval[h++] = j - 1;
+                }
+                if (i > j + 1) {
+                    newn++;
+                    newinterval[h++] = j + 1;
+                    newinterval[h++] = i - 1;
+                }
+                augment(newn, newinterval, depth, weight, matchweight, live,
+                        real, pnreal, ring, basecol, on, pbit, prealterm, nchar);
+            }
+        }
+    }
 }
 
 
