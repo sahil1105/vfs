@@ -289,46 +289,52 @@ checkreality(
 	long *prealterm,
 	long nchar)
 {
-   long i, k, nbits, choice[8], col, parity;
-   unsigned long left;
+    long i, k, nbits, choice[8], col, parity;
+    unsigned long left;
 
-   nbits = 1 << (depth - 1);
-   /* k will run through all subsets of M minus the first match */
-   for (k = 0; k < nbits; k++, *pbit <<= 1) {
-      if (!*pbit) {
-	 *pbit = 1;
-	 ++(*prealterm);
-	 if (*prealterm > nchar) {
-	    (void) printf("More than %ld entries in real are needed\n", nchar + 1);
-	    exit(32);
-	 }
-      }
-      if (!(*pbit & real[*prealterm]))
-	 continue;
-      col = basecol;
-      parity = ring & 1;
-      for (i = 1, left = k; i < depth; i++, left >>= 1) {
-	 if (left & 1) {	/* i.e. if a_i=1, where k=a_1+2a_2+4a_3+... */
-	    parity ^= 1;
-	    choice[i] = weight[i][1];
-	    col += weight[i][3];
-	 } else {
-	    choice[i] = weight[i][0];
-	    col += weight[i][2];
-	 }
-      }
-      if (parity) {
-	 choice[depth] = weight[depth][1];
-	 col += weight[depth][3];
-      } else {
-	 choice[depth] = weight[depth][0];
-	 col += weight[depth][2];
-      }
-      if (!stillreal(col, choice, depth, live, on)) {
-	 real[*prealterm] ^= *pbit;
-      } else
-	 (*pnreal)++;
-   }
+    nbits = 1 << (depth - 1);
+
+    /* k will run through all subsets of M minus the first match */
+    for (k = 0; k < nbits; k++, *pbit <<= 1) {
+        if (!*pbit) {
+            *pbit = 1;
+            ++(*prealterm);
+            if (*prealterm > nchar) {
+                (void) printf("More than %ld entries in real are needed\n", nchar + 1);
+                exit(32);
+            }
+        }
+
+        if (!(*pbit & real[*prealterm]))
+            continue;
+
+        col = basecol;
+        parity = ring & 1;
+        for (i = 1, left = k; i < depth; i++, left >>= 1) {
+            if (left & 1) {	/* i.e. if a_i=1, where k=a_1+2a_2+4a_3+... */
+               parity ^= 1;
+               choice[i] = weight[i][1];
+               col += weight[i][3];
+            } else {
+               choice[i] = weight[i][0];
+               col += weight[i][2];
+            }
+        }
+
+        if (parity) {
+            choice[depth] = weight[depth][1];
+            col += weight[depth][3];
+        } else {
+            choice[depth] = weight[depth][0];
+            col += weight[depth][2];
+        }
+
+        if (!stillreal(col, choice, depth, live, on)) {
+            real[*prealterm] ^= *pbit;
+        } else {
+            (*pnreal)++;
+        }
+    }
 }
 
 
