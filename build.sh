@@ -1,7 +1,7 @@
 
 
 
-CFLAGS="-Wall -Wextra"
+CFLAGS="-Wall -Wextra -Wundef -Wold-style-definition -Wstrict-prototypes -Wpedantic --std=c99"
 
 build() {
 	clang $CFLAGS -o reduce RSST/anc/reduce.c
