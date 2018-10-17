@@ -1060,14 +1060,17 @@ PrintAxle(tp_axle *A)
 
    deg = A->upp[0];
    for (i = 1; i <= 5 * deg; ++i) {
-      if (A->low[i] == 5 && A->upp[i] == INFTY)
+      if (A->low[i] == 5 && A->upp[i] == INFTY) {
 	 continue;
+      }
       (void) printf(" %d:%d", i, A->low[i]);
-      if (A->low[i] != A->upp[i])
-	 if (A->upp[i] == INFTY)
+      if (A->low[i] != A->upp[i]) {
+	 if (A->upp[i] == INFTY) {
 	    (void) printf("+");
-	 else
+	 } else {
 	    (void) printf("%d", A->upp[i]);
+	 }
+      }
       (void) printf(" ");
    }	/* i */
    (void) printf("\n");
