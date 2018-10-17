@@ -1,6 +1,9 @@
 
 
 
+# TODO: Fix whitespace/indentation
+# (three-space indent? mixed tabs/spaces? seems legit.)
+
 CFLAGS="-Wall -Wextra -Wundef -Wold-style-definition -Wstrict-prototypes -Wpedantic --std=c99"
 
 build() {

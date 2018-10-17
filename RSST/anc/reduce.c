@@ -17,11 +17,11 @@
 
 /* Version 1,  8 May 1995 */
 
-#define VERTS   30	/* max number of vertices in a free completion + 1 */ // jps
-#define DEG     13	/* max degree of a vertex in a free completion + 1 */
-			/* must be at least 13 because of row 0            */
-#define EDGES   70	/* max number of edges in a free completion + 1    */ // jps
-#define MAXRING 16	/* max ring-size */ // jps
+#define VERTS   30      /* max number of vertices in a free completion + 1 */ // jps
+#define DEG     13      /* max degree of a vertex in a free completion + 1 */
+                        /* must be at least 13 because of row 0            */
+#define EDGES   70      /* max number of edges in a free completion + 1    */ // jps
+#define MAXRING 16      /* max ring-size */ // jps
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,72 +51,91 @@ void ReadErr(int, char[]);
 int
 main(int argc, char *argv[])
 {
-   long ring, nlive, ncodes, i, nchar, count, power[MAXRING + 2], contract[EDGES + 1]; // jps
-   tp_angle angle, diffangle, sameangle;
-   tp_confmat graph;
-   char *live, *real, *s;
-   FILE *fp;
-   static long simatchnumber[] = {0L, 0L, 1L, 3L, 10L, 30L, 95L, 301L, 980L, 3228L, 10797L, 36487L, 124542L, 428506L, 1485003L, 5178161L,  18155816L}; // jps
+    long ring, nlive, ncodes, i, nchar, count, power[MAXRING + 2], contract[EDGES + 1]; // jps
+    tp_angle angle, diffangle, sameangle;
+    tp_confmat graph;
+    char *live, *real, *s;
+    FILE *fp;
+    static long simatchnumber[] = {
+        0L, 0L, 1L, 3L, 10L, 30L, 95L, 301L, 980L, 3228L, 10797L, 36487L, 124542L, 428506L, 1485003L, 5178161L,  18155816L
+    }; // jps
 
-   if (argc < 2)
-      s = "unavoidable.conf";
-   else
-      s = argv[1];
-   fp = fopen(s, "r");
-   if (fp == NULL) {
-      (void) printf("Can't open %s\n", s);
-      exit(1);
-   }
-   power[1] = 1;
-   for (i = 2; i <= MAXRING + 1; i++) // jps
-      power[i] = 3 * power[i - 1];	/* power[i] = 3^(i-1) for i>0 */
-   ncodes = (power[MAXRING] + 1) / 2;	/* max number of codes */
-   live = (char *) malloc(ncodes * sizeof(char));
-   nchar = simatchnumber[MAXRING] / 8 + 2;
-   real = (char *) malloc(nchar * sizeof(char));
-   if (live == NULL || real == NULL) {
-      i = (ncodes + nchar) * sizeof(char);
-      (void) printf("Not enough memory. %ld Kbytes needed.\n", i / 1024 + 1);
-      exit(44);
-   }
-   for (count = 0; !ReadConf(graph, fp, NULL); count++) {
-      findangles(graph, angle, diffangle, sameangle, contract);
-      /* "findangles" fills in the arrays "angle","diffangle","sameangle" and
-       * "contract" from the input "graph". "angle" will be used to compute
-       * which colourings of the ring edges extend to the configuration; the
-       * others will not be used unless a contract is specified, and if so
-       * they will be used in "checkcontract" below to verify that the
-       * contract is correct. */
-      ring = graph[0][1];	/* ring-size */
-      if (ring > MAXRING) {
-	 (void) printf("Ring-size bigger than %d\n", MAXRING);
-	 exit(43);
-      }
-      ncodes = (power[ring] + 1) / 2;	/* number of codes of colorings of R */
-      for (i = 0; i < ncodes; i++)
-	 live[i] = 1;
-      nlive = findlive(live, ncodes, angle, power, graph[0][2]);
-      /* "findlive" computes {\cal C}_0 and stores in live */
-      nchar = simatchnumber[ring] / 8 + 1;
-      for (i = 0; i <= nchar; i++)
-	 real[i] = (char) 255;
-      /* "real" will be an array of characters, and each bit of each
-       * character will correspond to a balanced signed matching. At this
-       * stage all the bits are set = 1. */
-      do
-	 testmatch(ring, real, power, live, nchar);
-      /* computes {\cal M}_{i+1} from {\cal M}_i, updates the bits of "real" */
-      while (updatelive(live, ncodes, &nlive));
-      /* computes {\cal C}_{i+1} from {\cal C}_i, updates "live" */
-      checkcontract(live, nlive, diffangle, sameangle, contract, power);
-      /* This verifies that the set claimed to be a contract for the
-       * configuration really is. */
-   }
-   (void) fclose(fp);
-   free(live);
-   free(real);
-   (void) printf("Reducibility of %ld configurations verified\n", count);
-   return (0);
+    if (argc < 2) {
+        s = "unavoidable.conf";
+    } else {
+        s = argv[1];
+    }
+
+    fp = fopen(s, "r");
+    if (fp == NULL) {
+        (void) printf("Can't open %s\n", s);
+        exit(1);
+    }
+
+    power[1] = 1;
+    for (i = 2; i <= MAXRING + 1; i++) { // jps
+        /* power[i] = 3^(i-1) for i>0 */
+        power[i] = 3 * power[i - 1];
+    }
+
+    ncodes = (power[MAXRING] + 1) / 2;   /* max number of codes */
+    live = (char *) malloc(ncodes * sizeof(char));
+    nchar = simatchnumber[MAXRING] / 8 + 2;
+    real = (char *) malloc(nchar * sizeof(char));
+    if (live == NULL || real == NULL) {
+        i = (ncodes + nchar) * sizeof(char);
+        (void) printf("Not enough memory. %ld Kbytes needed.\n", i / 1024 + 1);
+        exit(44);
+    }
+
+    for (count = 0; !ReadConf(graph, fp, NULL); count++) {
+        /* "findangles" fills in the arrays "angle", "diffangle", "sameangle" and
+         * "contract" from the input "graph". "angle" will be used to compute
+         * which colourings of the ring edges extend to the configuration; the
+         * others will not be used unless a contract is specified, and if so
+         * they will be used in "checkcontract" below to verify that the
+         * contract is correct. */
+        findangles(graph, angle, diffangle, sameangle, contract);
+
+        /* ring-size */
+        ring = graph[0][1];
+        if (ring > MAXRING) {
+            (void) printf("Ring-size bigger than %d\n", MAXRING);
+            exit(43);
+        }
+
+        /* number of codes of colorings of R */
+        ncodes = (power[ring] + 1) / 2;
+        for (i = 0; i < ncodes; i++) {
+            live[i] = 1;
+        }
+        /* "findlive" computes {\cal C}_0 and stores in live */
+        nlive = findlive(live, ncodes, angle, power, graph[0][2]);
+
+        /* "real" will be an array of characters, and each bit of each
+         * character will correspond to a balanced signed matching. At this
+         * stage all the bits are set = 1. */
+        nchar = simatchnumber[ring] / 8 + 1;
+        for (i = 0; i <= nchar; i++) {
+            real[i] = (char) 255;
+        }
+
+        /* computes {\cal C}_{i+1} from {\cal C}_i, updates "live" */
+        do {
+            /* computes {\cal M}_{i+1} from {\cal M}_i, updates the bits of "real" */
+            testmatch(ring, real, power, live, nchar);
+        } while (updatelive(live, ncodes, &nlive));
+
+        /* This verifies that the set claimed to be a contract for the
+         * configuration really is. */
+        checkcontract(live, nlive, diffangle, sameangle, contract, power);
+    }
+
+    (void) fclose(fp);
+    free(live);
+    free(real);
+    (void) printf("Reducibility of %ld configurations verified\n", count);
+    return (0);
 }
 
 
@@ -1010,3 +1029,4 @@ ReadErr(int n, char name[])
 /* End of file reduce.c */
 
 /* vim: set ts=8: */
+/* vim: set et ts=4 sw=4 sts=4: */
