@@ -1,5 +1,7 @@
 ## Vim editor swap files:
 *.swp
+.ycm_extra_conf.py
+.ycm_extra_conf.pyc
 
 ## Executables produced from compiling:
 reduce
