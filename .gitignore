@@ -1,3 +1,10 @@
+## Vim editor swap files:
+*.swp
+
+## Executables produced from compiling:
+reduce
+discharge
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
