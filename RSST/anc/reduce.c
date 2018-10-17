@@ -344,54 +344,69 @@ checkreality(
 long
 stillreal(long col, long choice[8], long depth, char *live, long on)
 {
-   long sum[128], mark, i, j, twopower, b, c; // jps
-   long twisted[128], ntwisted, untwisted[128], nuntwisted; // jps
+    long sum[128], mark, i, j, twopower, b, c; // jps
+    long twisted[128], ntwisted, untwisted[128], nuntwisted; // jps
 
-   ntwisted = nuntwisted = 0;
-   if (col < 0) {
-      if (!live[-col])
-	 return ((long) 0);
-      twisted[ntwisted++] = -col;
-      sum[0] = col;
-   } else {
-      if (!live[col])
-	 return ((long) 0);
-      untwisted[nuntwisted++] = sum[0] = col;
-   }
-   for (i = 2, twopower = 1, mark = 1; i <= depth; i++, twopower <<= 1) {
-      c = choice[i];
-      for (j = 0; j < twopower; j++, mark++) {
-	 b = sum[j] - c;
-	 if (b < 0) {
-	    if (!live[-b])
-	       return ((long) 0);
-	    twisted[ntwisted++] = -b;
-	    sum[mark] = b;
-	 } else {
-	    if (!live[b])
-	       return ((long) 0);
-	    untwisted[nuntwisted++] = sum[mark] = b;
-	 }
-      }
-   }
+    ntwisted = nuntwisted = 0;
+    if (col < 0) {
+        if (!live[-col]) {
+            return ((long) 0);
+        }
 
-   /* Now we know that every coloring that theta-fits M has its code in
-    * "live". We mark the corresponding entry of "live" by theta, that is,
-    * set its second, third or fourth bit to 1 */
+        twisted[ntwisted++] = -col;
+        sum[0] = col;
+    } else {
+        if (!live[col]) {
+            return ((long) 0);
+        }
 
-   if (on) {
-      for (i = 0; i < ntwisted; i++)
-	 live[twisted[i]] |= 8;
-      for (i = 0; i < nuntwisted; i++)
-	 live[untwisted[i]] |= 4;
-   } else {
-      for (i = 0; i < ntwisted; i++)
-	 live[twisted[i]] |= 2;
-      for (i = 0; i < nuntwisted; i++)
-	 live[untwisted[i]] |= 2;
-   }
+        untwisted[nuntwisted++] = sum[0] = col;
+    }
 
-   return ((long) 1);
+    for (i = 2, twopower = 1, mark = 1; i <= depth; i++, twopower <<= 1) {
+        c = choice[i];
+        for (j = 0; j < twopower; j++, mark++) {
+            b = sum[j] - c;
+            if (b < 0) {
+                if (!live[-b]) {
+                    return ((long) 0);
+                }
+
+                twisted[ntwisted++] = -b;
+                sum[mark] = b;
+            } else {
+                if (!live[b]) {
+                    return ((long) 0);
+                }
+
+                untwisted[nuntwisted++] = sum[mark] = b;
+            }
+        }
+    }
+
+    /* Now we know that every coloring that theta-fits M has its code in
+     * "live". We mark the corresponding entry of "live" by theta, that is,
+     * set its second, third or fourth bit to 1 */
+
+    if (on) {
+        for (i = 0; i < ntwisted; i++) {
+            live[twisted[i]] |= 8;
+        }
+
+        for (i = 0; i < nuntwisted; i++) {
+            live[untwisted[i]] |= 4;
+        }
+    } else {
+        for (i = 0; i < ntwisted; i++) {
+            live[twisted[i]] |= 2;
+        }
+
+        for (i = 0; i < nuntwisted; i++) {
+            live[untwisted[i]] |= 2;
+        }
+    }
+
+    return ((long) 1);
 }
 
 
