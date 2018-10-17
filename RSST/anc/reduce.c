@@ -416,30 +416,39 @@ stillreal(long col, long choice[8], long depth, char *live, long on)
 long
 updatelive(char *live, long ncols, long *p)
 {
-   long i, nlive, newnlive;
+    long i, nlive, newnlive;
 
-   nlive = *p;
-   newnlive = 0;
-   if (live[0] > 1)
-      live[0] = (char) 15;
-   for (i = 0; i < ncols; i++) {
-      if (live[i] != 15)
-	 live[i] = 0;
-      else {
-	 newnlive++;
-	 live[i] = 1;
-      }
-   }
-   *p = newnlive;
-   (void) printf("            %9ld", newnlive);
-   (void) fflush(stdout);
-   if ((newnlive < nlive) && (newnlive > 0))
-      return ((long) 1);
-   if (!newnlive)
-      (void) printf("\n\n\n                  ***  D-reducible  ***\n\n");
-   else
-      (void) printf("\n\n\n                ***  Not D-reducible  ***\n");
-   return ((long) 0);
+    nlive = *p;
+    newnlive = 0;
+
+    if (live[0] > 1) {
+        live[0] = (char) 15;
+    }
+
+    for (i = 0; i < ncols; i++) {
+        if (live[i] != 15) {
+            live[i] = 0;
+        } else {
+            newnlive++;
+            live[i] = 1;
+        }
+    }
+
+    *p = newnlive;
+    (void) printf("            %9ld", newnlive);
+    (void) fflush(stdout);
+
+    if ((newnlive < nlive) && (newnlive > 0)) {
+        return ((long) 1);
+    }
+
+    if (!newnlive) {
+        (void) printf("\n\n\n                  ***  D-reducible  ***\n\n");
+    } else {
+        (void) printf("\n\n\n                ***  Not D-reducible  ***\n");
+    }
+
+    return ((long) 0);
 }
 
 /* Numbers edges from 1 up, so that each edge has as many later edges in
