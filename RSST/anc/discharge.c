@@ -5,7 +5,7 @@
    D. P. Sanders, P. D. Seymour and R. Thomas. Modifications by
    J.P. Steinberger, June 2008.
    Modified lines are ended by a comment of the form `// jps'. 
-   The original header follows below:
+   The original header follows below: */
 
 /* This is part II of two programs that serve as supplements to the paper
  * `The Four-Colour Theorem' by N. Robertson, D. P. Sanders, P. D. Seymour
@@ -1907,3 +1907,5 @@ tp_question question;
 
 
 /* End of file discharge.c */
+
+// vim: set ts=8:

@@ -1,7 +1,7 @@
 
 
 
-CFLAGS=""
+CFLAGS="-Wall -Wextra"
 
 build() {
 	clang $CFLAGS -o reduce RSST/anc/reduce.c
