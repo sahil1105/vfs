@@ -457,107 +457,119 @@ updatelive(char *live, long ncols, long *p)
 void
 strip(tp_confmat graph, tp_edgeno edgeno)
 {
-   long d, h, u, v, w, x, verts, ring, term, maxint, maxes, max[VERTS];
-   long inter, maxdeg, best, first, previous, *grav, done[VERTS];
+    long d, h, u, v, w, x, verts, ring, term, maxint, maxes, max[VERTS];
+    long inter, maxdeg, best, first, previous, *grav, done[VERTS];
 
-   for (u = 1; u < VERTS; u++)
-      for (v = 1; v < VERTS; v++)
-	 edgeno[u][v] = 0;
-   verts = graph[0][0];
-   ring = graph[0][1];
-   for (v = 1; v <= ring; v++) {
-      u = (v > 1) ? v - 1 : ring;
-      edgeno[u][v] = v;
-      edgeno[v][u] = v;
-   }
-   for (v = 1; v <= verts; v++)
-      done[v] = 0;
-   term = 3 * (verts - 1) - ring;
-   for (x = ring + 1; x <= verts; x++) {
-      /* First we find all vertices from the interior that meet the "done"
-       * vertices in an interval, and write them in max[1] .. max[maxes] */
-      maxint = 0;
-      maxes = 0;
-      for (v = ring + 1; v <= verts; v++) {
-	 if (done[v])
-	    continue;
-	 inter = ininterval(graph[v], done);
+    for (u = 1; u < VERTS; u++) {
+        for (v = 1; v < VERTS; v++) {
+            edgeno[u][v] = 0;
+        }
+    }
 
-	 if (inter > maxint) {
-	    maxint = inter;
-	    maxes = 1;
-	    max[1] = v;
-	 } else if (inter == maxint)
-	    max[++maxes] = v;
-      }	/* for v bracket */
-      /* From the terms in max we choose the one of maximum degree */
-      maxdeg = 0;
+    verts = graph[0][0];
+    ring = graph[0][1];
+    for (v = 1; v <= ring; v++) {
+        u = (v > 1) ? v - 1 : ring;
+        edgeno[u][v] = v;
+        edgeno[v][u] = v;
+    }
 
-      for (h = 1; h <= maxes; h++) {
-	 d = graph[max[h]][0];
-	 if (d > maxdeg) {
-	    maxdeg = d;
-	    best = max[h];
-	 }
-      }
-      /* So now, the vertex "best" will be the next vertex to be done */
+    for (v = 1; v <= verts; v++) {
+        done[v] = 0;
+    }
 
-      grav = graph[best];
-      d = grav[0];
-      first = 1;
-      previous = done[grav[d]];
-      while ((previous) || (!done[grav[first]])) {
-	 previous = done[grav[first++]];
-	 if (first > d) {
-	    first = 1;
-	    break;
-	 }
-      }
-      for (h = first; done[grav[h]]; h++) {
-	 edgeno[best][grav[h]] = term;
-	 edgeno[grav[h]][best] = term;
-	 term--;
-	 if (h == d) {
-	    if (first == 1)
-	       break;
-	    h = 0;
-	 }
-      }
-      done[best] = 1;
-   }	/* for x bracket */
-   /* This eventually lists all the internal edges of the configuration */
+    term = 3 * (verts - 1) - ring;
+    for (x = ring + 1; x <= verts; x++) {
+        /* First we find all vertices from the interior that meet the "done"
+         * vertices in an interval, and write them in max[1] .. max[maxes] */
+        maxint = 0;
+        maxes = 0;
+        for (v = ring + 1; v <= verts; v++) {
+            if (done[v]) {
+                continue;
+            }
 
-   /* Now we must list the edges between the interior and the ring */
-   for (x = 1; x <= ring; x++) {
-      maxint = 0;
-      for (v = 1; v <= ring; v++) {
-	 if (done[v])
-	    continue;
-	 u = (v > 1) ? v - 1 : ring;
-	 w = (v < ring) ? v + 1 : 1;
-	 inter = 3 * graph[v][0] + 4 * (done[u] + done[w]);
-	 if (inter > maxint) {
-	    maxint = inter;
-	    best = v;
-	 }
-      }	/* for v bracket */
-      grav = graph[best];
-      u = (best > 1) ? best - 1 : ring;
-      if (done[u]) {
-	 for (h = grav[0] - 1; h >= 2; h--) {
-	    edgeno[best][grav[h]] = term;
-	    edgeno[grav[h]][best] = term;
-	    term--;
-	 }
-      } else {
-	 for (h = 2; h < grav[0]; h++) {
-	    edgeno[best][grav[h]] = term;
-	    edgeno[grav[h]][best] = term;
-	    term--;
-	 }
-      }
-      done[best] = 1;
-   }	/* for x bracket */
+            inter = ininterval(graph[v], done);
+            if (inter > maxint) {
+                maxint = inter;
+                maxes = 1;
+                max[1] = v;
+            } else if (inter == maxint) {
+                max[++maxes] = v;
+            }
+        }   /* for v bracket */
+
+        /* From the terms in max we choose the one of maximum degree */
+        maxdeg = 0;
+
+        for (h = 1; h <= maxes; h++) {
+            d = graph[max[h]][0];
+            if (d > maxdeg) {
+                maxdeg = d;
+                best = max[h];
+            }
+        }
+        /* So now, the vertex "best" will be the next vertex to be done */
+
+        grav = graph[best];
+        d = grav[0];
+        first = 1;
+        previous = done[grav[d]];
+        while ((previous) || (!done[grav[first]])) {
+            previous = done[grav[first++]];
+            if (first > d) {
+                first = 1;
+                break;
+            }
+        }
+
+        for (h = first; done[grav[h]]; h++) {
+            edgeno[best][grav[h]] = term;
+            edgeno[grav[h]][best] = term;
+            term--;
+            if (h == d) {
+                if (first == 1)
+                    break;
+                h = 0;
+            }
+        }
+        done[best] = 1;
+    }   /* for x bracket */
+    /* This eventually lists all the internal edges of the configuration */
+
+    /* Now we must list the edges between the interior and the ring */
+    for (x = 1; x <= ring; x++) {
+        maxint = 0;
+        for (v = 1; v <= ring; v++) {
+            if (done[v]) {
+                continue;
+            }
+            u = (v > 1) ? v - 1 : ring;
+            w = (v < ring) ? v + 1 : 1;
+            inter = 3 * graph[v][0] + 4 * (done[u] + done[w]);
+            if (inter > maxint) {
+                maxint = inter;
+                best = v;
+            }
+        }   /* for v bracket */
+
+        grav = graph[best];
+        u = (best > 1) ? best - 1 : ring;
+        if (done[u]) {
+            for (h = grav[0] - 1; h >= 2; h--) {
+                edgeno[best][grav[h]] = term;
+                edgeno[grav[h]][best] = term;
+                term--;
+            }
+        } else {
+            for (h = 2; h < grav[0]; h++) {
+                edgeno[best][grav[h]] = term;
+                edgeno[grav[h]][best] = term;
+                term--;
+            }
+        }
+        done[best] = 1;
+    }   /* for x bracket */
 }
 
 
