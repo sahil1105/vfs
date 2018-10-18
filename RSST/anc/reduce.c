@@ -635,109 +635,139 @@ ininterval(long grav[], long done[])
 void
 findangles(tp_confmat graph, tp_angle angle, tp_angle diffangle, tp_angle sameangle, long contract[])
 {
+    long a, b, c, h, i, j, u, v, w, edges;
+    tp_edgeno edgeno;
+    long neighbour[VERTS];
 
-   long a, b, c, h, i, j, u, v, w, edges;
-   tp_edgeno edgeno;
-   long neighbour[VERTS];
+    edges = 3 * graph[0][0] - 3 - graph[0][1];
+    if (edges >= EDGES) {
+        (void) printf("Configuration has more than %d edges\n", EDGES - 1);
+        exit(20);
+    }
 
-   edges = 3 * graph[0][0] - 3 - graph[0][1];
-   if (edges >= EDGES) {
-      (void) printf("Configuration has more than %d edges\n", EDGES - 1);
-      exit(20);
-   }
-   strip(graph, edgeno);
-   for (i = 0; i < EDGES + 1; i++)
-      contract[i] = 0;
-   contract[0] = graph[0][4];	/* number of edges in contract */
-   if (contract[0] < 0 || contract[0] > 4) {
-      (void) printf("         ***  ERROR: INVALID CONTRACT  ***\n\n");
-      exit(27);
-   }
-   for (i = 5; i <= 2 * contract[0] + 4; i++)
-      if (graph[0][i] < 1 || graph[0][i] > graph[0][0]) {
-	 (void) printf("         ***  ERROR: ILLEGAL CONTRACT  ***\n\n");
-	 exit(29);
-      }
-   contract[EDGES] = graph[0][3];
-   for (i = 1; i <= contract[0]; i++) {
-      u = graph[0][2 * i + 3];
-      v = graph[0][2 * i + 4];
-      if (edgeno[u][v] < 1) {
-	 (void) printf("         ***  ERROR: CONTRACT CONTAINS NON-EDGE  ***\n\n");
-	 exit(29);
-      }
-      contract[edgeno[u][v]] = 1;
-   }
-   for (i = 1; i <= graph[0][1]; i++)
-     if (contract[i]) {
-	 (void) printf("         ***  ERROR: CONTRACT IS NOT SPARSE  ***\n\n");
-	 exit(21);
-      }
-   for (i = 1; i <= edges; i++)
-      diffangle[i][0] = sameangle[i][0] = angle[i][0] = 0;
-   diffangle[0][0] = angle[0][0] = graph[0][0];
-   diffangle[0][1] = angle[0][1] = graph[0][1];
-   diffangle[0][2] = angle[0][2] = edges;
+    strip(graph, edgeno);
+    for (i = 0; i < EDGES + 1; i++) {
+        contract[i] = 0;
+    }
 
-   for (v = 1; v <= graph[0][0]; v++) {
-      for (h = 1; h <= graph[v][0]; h++) {
-	 if ((v <= graph[0][1]) && (h == graph[v][0]))
-	    continue;
-	 i = (h < graph[v][0]) ? h + 1 : 1;
-	 u = graph[v][h];
-	 w = graph[v][i];
-	 a = edgeno[v][w];
-	 b = edgeno[u][w];
-	 c = edgeno[u][v];
-	 if (contract[a] && contract[b]) {
-	    (void) printf("         ***  ERROR: CONTRACT IS NOT SPARSE  ***\n\n");
-	    exit(22);
-	 }
-	 if (a > c) {
-	    angle[c][++angle[c][0]] = a;
-	    if ((!contract[a]) && (!contract[b]) && (!contract[c]))
-	       diffangle[c][++diffangle[c][0]] = a;
-	    if (contract[b])
-	       sameangle[c][++sameangle[c][0]] = a;
-	 }
-	 if (b > c) {
-	    angle[c][++angle[c][0]] = b;
-	    if ((!contract[a]) && (!contract[b]) && (!contract[c]))
-	       diffangle[c][++diffangle[c][0]] = b;
-	    if (contract[a])
-	       sameangle[c][++sameangle[c][0]] = b;
-	 }
-      }
-   }
+    contract[0] = graph[0][4];  /* number of edges in contract */
+    if (contract[0] < 0 || contract[0] > 4) {
+        (void) printf("         ***  ERROR: INVALID CONTRACT  ***\n\n");
+        exit(27);
+    }
 
-   /* checking that there is a triad */
-   if (contract[0] < 4)
-      return;
-   for (v = graph[0][1] + 1; v <= graph[0][0]; v++) {
-      /* v is a candidate triad */
-      for (a = 0, i = 1; i <= graph[v][0]; i++) {
-	 u = graph[v][i];
-	 for (j = 5; j <= 12; j++)
-	    if (u == graph[0][j]) {
-	       a++;
-	       break;
-	    }
-      }
-      if (a < 3)
-	 continue;
-      if (graph[v][0] >= 6)
-	 return;
-      for (u = 1; u <= graph[0][0]; u++)
-	 neighbour[u] = 0;
-      for (i = 1; i <= graph[v][0]; i++)
-	 neighbour[graph[v][i]] = 1;
-      for (j = 5; j <= 12; j++) {
-	 if (!neighbour[graph[0][j]])
-	    return;
-      }
-   }
-   (void) printf("         ***  ERROR: CONTRACT HAS NO TRIAD  ***\n\n");
-   exit(28);
+    for (i = 5; i <= 2 * contract[0] + 4; i++) {
+        if (graph[0][i] < 1 || graph[0][i] > graph[0][0]) {
+            (void) printf("         ***  ERROR: ILLEGAL CONTRACT  ***\n\n");
+            exit(29);
+        }
+    }
+
+    contract[EDGES] = graph[0][3];
+    for (i = 1; i <= contract[0]; i++) {
+        u = graph[0][2 * i + 3];
+        v = graph[0][2 * i + 4];
+        if (edgeno[u][v] < 1) {
+            (void) printf("         ***  ERROR: CONTRACT CONTAINS NON-EDGE  ***\n\n");
+            exit(29);
+        }
+        contract[edgeno[u][v]] = 1;
+    }
+    for (i = 1; i <= graph[0][1]; i++) {
+        if (contract[i]) {
+            (void) printf("         ***  ERROR: CONTRACT IS NOT SPARSE  ***\n\n");
+            exit(21);
+        }
+    }
+
+    for (i = 1; i <= edges; i++) {
+        diffangle[i][0] = sameangle[i][0] = angle[i][0] = 0;
+    }
+
+    diffangle[0][0] = angle[0][0] = graph[0][0];
+    diffangle[0][1] = angle[0][1] = graph[0][1];
+    diffangle[0][2] = angle[0][2] = edges;
+
+    for (v = 1; v <= graph[0][0]; v++) {
+        for (h = 1; h <= graph[v][0]; h++) {
+            if ((v <= graph[0][1]) && (h == graph[v][0])) {
+                continue;
+            }
+
+            i = (h < graph[v][0]) ? h + 1 : 1;
+            u = graph[v][h];
+            w = graph[v][i];
+            a = edgeno[v][w];
+            b = edgeno[u][w];
+            c = edgeno[u][v];
+
+            if (contract[a] && contract[b]) {
+                (void) printf("         ***  ERROR: CONTRACT IS NOT SPARSE  ***\n\n");
+                exit(22);
+            }
+
+            if (a > c) {
+                angle[c][++angle[c][0]] = a;
+                if ((!contract[a]) && (!contract[b]) && (!contract[c])) {
+                    diffangle[c][++diffangle[c][0]] = a;
+                }
+
+                if (contract[b]) {
+                    sameangle[c][++sameangle[c][0]] = a;
+                }
+            }
+
+            if (b > c) {
+                angle[c][++angle[c][0]] = b;
+                if ((!contract[a]) && (!contract[b]) && (!contract[c])) {
+                    diffangle[c][++diffangle[c][0]] = b;
+                }
+
+                if (contract[a]) {
+                    sameangle[c][++sameangle[c][0]] = b;
+                }
+            }
+        }
+    }
+
+    /* checking that there is a triad */
+    if (contract[0] < 4) {
+        return;
+    }
+
+    for (v = graph[0][1] + 1; v <= graph[0][0]; v++) {
+        /* v is a candidate triad */
+        for (a = 0, i = 1; i <= graph[v][0]; i++) {
+            u = graph[v][i];
+            for (j = 5; j <= 12; j++) {
+                if (u == graph[0][j]) {
+                    a++;
+                    break;
+                }
+            }
+        }
+
+        if (a < 3) {
+            continue;
+        }
+        if (graph[v][0] >= 6) {
+            return;
+        }
+        for (u = 1; u <= graph[0][0]; u++) {
+            neighbour[u] = 0;
+        }
+        for (i = 1; i <= graph[v][0]; i++) {
+            neighbour[graph[v][i]] = 1;
+        }
+        for (j = 5; j <= 12; j++) {
+            if (!neighbour[graph[0][j]]) {
+                return;
+            }
+        }
+    }
+
+    (void) printf("         ***  ERROR: CONTRACT HAS NO TRIAD  ***\n\n");
+    exit(28);
 }
 
 
