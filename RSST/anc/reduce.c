@@ -582,8 +582,8 @@ ininterval(long grav[], long done[])
 
     d = grav[0];
 
-    // TODO: AAAAAAAA USELESS FOR LOOP AAAA IS THIS A BUG? WHO KNOWS
-    // Actually this exists because of the side effect 'first++'.
+    // Note: This loop is not actually useless.
+    // This exists because of the side effect 'first++'.
     // It would be clearer if it had been written:
     // first = 1;
     // while ((first < d) && !done[grav[first]]) { first++; }
@@ -594,7 +594,7 @@ ininterval(long grav[], long done[])
         return (done[grav[d]]);
     }
 
-    // TODO: AAAA SAME
+    // Note: A similar situation occurs here.
     for (last = first; (last < d) && (done[grav[last + 1]]); last++)
         ;
 
