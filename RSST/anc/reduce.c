@@ -827,83 +827,104 @@ findlive(char *live, long ncodes, tp_angle angle, long power[], long extentclaim
 void
 checkcontract(char *live, long nlive, tp_angle diffangle, tp_angle sameangle, long contract[EDGES + 1], long power[])
 {
-   long j, c[EDGES], i, u, *dm, *sm;
-   long ring, bigno;
-   long forbidden[EDGES];	/* called F in the notes */
-   long start;	/* called s in the notes */
+    long j, c[EDGES], i, u, *dm, *sm;
+    long ring, bigno;
+    long forbidden[EDGES];  /* called F in the notes */
+    long start;             /* called s in the notes */
 
-   if (!nlive) {
-      if (!contract[0]) {
-	 (void) printf("\n");
-	 return;
-      } else {
-	 (void) printf("         ***  ERROR: CONTRACT PROPOSED  ***\n\n");
-	 exit(23);
-      }
-   }
-   if (!contract[0]) {
-      (void) printf("       ***  ERROR: NO CONTRACT PROPOSED  ***\n\n");
-      exit(24);
-   }
-   if (nlive != contract[EDGES]) {
-      (void) printf("       ***  ERROR: DISCREPANCY IN EXTERIOR SIZE  ***\n\n");
-      exit(25);
-   }
-   ring = diffangle[0][1];
-   bigno = (power[ring + 1] - 1) / 2;	/* needed in "inlive" */
-   start = diffangle[0][2];
-   while (contract[start])
-      start--;
-   c[start] = 1;
-   j = start;
-   while (contract[--j]);
-   dm = diffangle[j];
-   sm = sameangle[j];
-   c[j] = 1;
-   for (u = 4, i = 1; i <= dm[0]; i++)
-      u |= c[dm[i]];
-   for (i = 1; i <= sm[0]; i++)
-      u |= ~c[sm[i]];
-   forbidden[j] = u;
+    if (!nlive) {
+        if (!contract[0]) {
+            (void) printf("\n");
+            return;
+        } else {
+            (void) printf("         ***  ERROR: CONTRACT PROPOSED  ***\n\n");
+            exit(23);
+        }
+    }
 
-   for (;;) {
-      while (forbidden[j] & c[j]) {
-	 c[j] <<= 1;
-	 while (c[j] & 8) {
-	    while (contract[++j]);
-	    if (j >= start) {
-	       (void) printf("               ***  Contract confirmed  ***\n\n");
-	       return;
-	    }
-	    c[j] <<= 1;
-	 }
-      }
-      if (j == 1) {
-	 if (inlive(c, power, ring, live, bigno)) {
-	    (void) printf("       ***  ERROR: INPUT CONTRACT IS INCORRECT  ***\n\n");
-	    exit(26);
-	 }
-	 c[j] <<= 1;
-	 while (c[j] & 8) {
-	    while (contract[++j]);
-	    if (j >= start) {
-	       (void) printf("               ***  Contract confirmed  ***\n\n");
-	       return;
-	    }
-	    c[j] <<= 1;
-	 }
-	 continue;
-      }
-      while (contract[--j]);
-      dm = diffangle[j];
-      sm = sameangle[j];
-      c[j] = 1;
-      for (u = 0, i = 1; i <= dm[0]; i++)
-	 u |= c[dm[i]];
-      for (i = 1; i <= sm[0]; i++)
-	 u |= ~c[sm[i]];
-      forbidden[j] = u;
-   }
+    if (!contract[0]) {
+        (void) printf("       ***  ERROR: NO CONTRACT PROPOSED  ***\n\n");
+        exit(24);
+    }
+
+    if (nlive != contract[EDGES]) {
+        (void) printf("       ***  ERROR: DISCREPANCY IN EXTERIOR SIZE  ***\n\n");
+        exit(25);
+    }
+
+    ring = diffangle[0][1];
+    bigno = (power[ring + 1] - 1) / 2;  /* needed in "inlive" */
+    start = diffangle[0][2];
+    while (contract[start]) {
+        start--;
+    }
+
+    c[start] = 1;
+    j = start;
+    while (contract[--j]) {
+        ;
+    }
+
+    dm = diffangle[j];
+    sm = sameangle[j];
+    c[j] = 1;
+    for (u = 4, i = 1; i <= dm[0]; i++) {
+        u |= c[dm[i]];
+    }
+    for (i = 1; i <= sm[0]; i++) {
+        u |= ~c[sm[i]];
+    }
+    forbidden[j] = u;
+
+    for (;;) {
+        while (forbidden[j] & c[j]) {
+            c[j] <<= 1;
+            while (c[j] & 8) {
+                while (contract[++j]) {
+                    ;
+                }
+                if (j >= start) {
+                    (void) printf("               ***  Contract confirmed  ***\n\n");
+                    return;
+                }
+                c[j] <<= 1;
+            }
+        }
+
+        if (j == 1) {
+            if (inlive(c, power, ring, live, bigno)) {
+                (void) printf("       ***  ERROR: INPUT CONTRACT IS INCORRECT  ***\n\n");
+                exit(26);
+            }
+            c[j] <<= 1;
+            while (c[j] & 8) {
+                while (contract[++j]) {
+                    ;
+                }
+                if (j >= start) {
+                    (void) printf("               ***  Contract confirmed  ***\n\n");
+                    return;
+                }
+                c[j] <<= 1;
+            }
+            continue;
+        }
+
+        while (contract[--j]) {
+            ;
+        }
+
+        dm = diffangle[j];
+        sm = sameangle[j];
+        c[j] = 1;
+        for (u = 0, i = 1; i <= dm[0]; i++) {
+            u |= c[dm[i]];
+        }
+        for (i = 1; i <= sm[0]; i++) {
+            u |= ~c[sm[i]];
+        }
+        forbidden[j] = u;
+    }
 }
 
 void
