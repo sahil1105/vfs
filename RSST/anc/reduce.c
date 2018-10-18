@@ -930,22 +930,22 @@ checkcontract(char *live, long nlive, tp_angle diffangle, tp_angle sameangle, lo
 void
 printstatus(long ring, long totalcols, long extent, long extentclaim)
 {
-   static long simatchnumber[] = {
-       0L, 0L, 1L, 3L, 10L, 30L, 95L, 301L, 980L, 3228L, 10797L, 36487L, 124542L, 428506L, 1485003L
-   };
+    static long simatchnumber[] = {
+        0L, 0L, 1L, 3L, 10L, 30L, 95L, 301L, 980L, 3228L, 10797L, 36487L, 124542L, 428506L, 1485003L
+    };
 
-   (void) printf("\n\n   This has ring-size %ld, so there are %ld colourings total,\n",ring, totalcols);
-   (void) printf("   and %ld balanced signed matchings.\n",simatchnumber[ring]);
+    (void) printf("\n\n   This has ring-size %ld, so there are %ld colourings total,\n",ring, totalcols);
+    (void) printf("   and %ld balanced signed matchings.\n",simatchnumber[ring]);
 
-   (void) printf("\n   There are %ld colourings that extend to the configuration.", extent);
-   if (extent != extentclaim) {
-      (void) printf("\n   *** ERROR: DISCREPANCY IN NUMBER OF EXTENDING COLOURINGS ***\n");
-      exit(31);
-   }
-   (void) printf("\n\n            remaining               remaining balanced\n");
-   (void) printf("           colourings               signed matchings\n");
-   (void) printf("\n              %7ld", totalcols - extent);
-   (void) fflush(stdout);
+    (void) printf("\n   There are %ld colourings that extend to the configuration.", extent);
+    if (extent != extentclaim) {
+        (void) printf("\n   *** ERROR: DISCREPANCY IN NUMBER OF EXTENDING COLOURINGS ***\n");
+        exit(31);
+    }
+    (void) printf("\n\n            remaining               remaining balanced\n");
+    (void) printf("           colourings               signed matchings\n");
+    (void) printf("\n              %7ld", totalcols - extent);
+    (void) fflush(stdout);
 }
 
 /* Given a colouring specified by a 1,2,4-valued function "col", it computes
