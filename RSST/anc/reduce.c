@@ -578,32 +578,52 @@ strip(tp_confmat graph, tp_edgeno edgeno)
 long
 ininterval(long grav[], long done[])
 {
-   long d, j, first, last, worried, length;
+    long d, j, first, last, worried, length;
 
-   d = grav[0];
+    d = grav[0];
 
-   for (first = 1; (first < d) && (!done[grav[first]]); first++);
-   if (first == d)
-      return (done[grav[d]]);
-   for (last = first; (last < d) && (done[grav[last + 1]]); last++);
-   length = last - first + 1;
-   if (last == d)
-      return (length);
-   if (first > 1) {
-      for (j = last + 2; j <= d; j++)
-	 if (done[grav[j]])
-	    return ((long) 0);
-      return (length);
-   }
-   worried = 0;
-   for (j = last + 2; j <= d; j++) {
-      if (done[grav[j]]) {
-	 length++;
-	 worried = 1;
-      } else if (worried)
-	 return ((long) 0);
-   }
-   return (length);
+    // TODO: AAAAAAAA USELESS FOR LOOP AAAA IS THIS A BUG? WHO KNOWS
+    // Actually this exists because of the side effect 'first++'.
+    // It would be clearer if it had been written:
+    // first = 1;
+    // while ((first < d) && !done[grav[first]]) { first++; }
+    for (first = 1; (first < d) && (!done[grav[first]]); first++)
+        ;
+
+    if (first == d) {
+        return (done[grav[d]]);
+    }
+
+    // TODO: AAAA SAME
+    for (last = first; (last < d) && (done[grav[last + 1]]); last++)
+        ;
+
+    length = last - first + 1;
+    if (last == d) {
+        return (length);
+    }
+
+    if (first > 1) {
+        for (j = last + 2; j <= d; j++) {
+            if (done[grav[j]]) {
+                return (long) 0;
+            }
+        }
+
+        return length;
+    }
+
+    worried = 0;
+    for (j = last + 2; j <= d; j++) {
+        if (done[grav[j]]) {
+            length++;
+            worried = 1;
+        } else if (worried) {
+            return (long) 0;
+        }
+    }
+
+    return length;
 }
 
 /* writes into angle[i] all edges with number >i on a common triangle T say
