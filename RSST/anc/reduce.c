@@ -777,46 +777,49 @@ findangles(tp_confmat graph, tp_angle angle, tp_angle diffangle, tp_angle samean
 long
 findlive(char *live, long ncodes, tp_angle angle, long power[], long extentclaim)
 {
-   long j, c[EDGES], i, u, *am;
-   long edges, ring, extent, bigno;
-   long forbidden[EDGES];	/* called F in the notes */
+    long j, c[EDGES], i, u, *am;
+    long edges, ring, extent, bigno;
+    long forbidden[EDGES];	/* called F in the notes */
 
-   ring = angle[0][1];
-   edges = angle[0][2];
-   bigno = (power[ring + 1] - 1) / 2;	/* needed in "record" */
-   c[edges] = 1;
-   j = edges - 1;
-   c[j] = 2;
-   forbidden[j] = 5;
-   for (extent = 0;;) {
-      while (forbidden[j] & c[j]) {
-	 c[j] <<= 1;
-	 while (c[j] & 8) {
-	    if (j >= edges - 1) {
-	       printstatus(ring, ncodes, extent, extentclaim);
-	       return (ncodes - extent);
-	    }
-	    c[++j] <<= 1;
-	 }
-      }
-      if (j == ring + 1) {
-	 record(c, power, ring, angle, live, &extent, bigno);
-	 c[j] <<= 1;
-	 while (c[j] & 8) {
-	    if (j >= edges - 1) {
-	       printstatus(ring, ncodes, extent, extentclaim);
-	       return (ncodes - extent);
-	    }
-	    c[++j] <<= 1;
-	 }
-      } else {
-	 am = angle[--j];
-	 c[j] = 1;
-	 for (u = 0, i = 1; i <= am[0]; i++)
-	    u |= c[am[i]];
-	 forbidden[j] = u;
-      }
-   }
+    ring = angle[0][1];
+    edges = angle[0][2];
+    bigno = (power[ring + 1] - 1) / 2;	/* needed in "record" */
+    c[edges] = 1;
+    j = edges - 1;
+    c[j] = 2;
+    forbidden[j] = 5;
+
+    for (extent = 0;;) {
+        while (forbidden[j] & c[j]) {
+            c[j] <<= 1;
+            while (c[j] & 8) {
+                if (j >= edges - 1) {
+                    printstatus(ring, ncodes, extent, extentclaim);
+                    return (ncodes - extent);
+                }
+                c[++j] <<= 1;
+            }
+        }
+
+        if (j == ring + 1) {
+            record(c, power, ring, angle, live, &extent, bigno);
+            c[j] <<= 1;
+
+            while (c[j] & 8) {
+                if (j >= edges - 1) {
+                    printstatus(ring, ncodes, extent, extentclaim);
+                    return (ncodes - extent);
+                }
+                c[++j] <<= 1;
+            }
+        } else {
+            am = angle[--j];
+            c[j] = 1;
+            for (u = 0, i = 1; i <= am[0]; i++)
+                u |= c[am[i]];
+            forbidden[j] = u;
+        }
+    }
 }
 
 /* checks that no colouring in live is the restriction to E(R) of a
