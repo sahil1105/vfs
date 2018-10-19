@@ -956,27 +956,32 @@ printstatus(long ring, long totalcols, long extent, long extentclaim)
 void
 record(long col[], long power[], long ring, long angle[][5], char *live, long *p, long bigno)
 {
-   long weight[5], colno, sum, i, min, max, w;
+    long weight[5], colno, sum, i, min, max, w;
 
-   for (i = 1; i < 5; i++)
-      weight[i] = 0;
-   for (i = 1; i <= ring; i++) {
-      sum = 7 - col[angle[i][1]] - col[angle[i][2]];
-      weight[sum] += power[i];
-   }
-   min = max = weight[4];
-   for (i = 1; i <= 2; i++) {
-      w = weight[i];
-      if (w < min)
-	 min = w;
-      else if (w > max)
-	 max = w;
-   }
-   colno = bigno - 2 * min - max;
-   if (live[colno]) {
-      (*p)++;
-      live[colno] = 0;
-   }
+    for (i = 1; i < 5; i++) {
+        weight[i] = 0;
+    }
+
+    for (i = 1; i <= ring; i++) {
+        sum = 7 - col[angle[i][1]] - col[angle[i][2]];
+        weight[sum] += power[i];
+    }
+
+    min = max = weight[4];
+    for (i = 1; i <= 2; i++) {
+        w = weight[i];
+        if (w < min) {
+            min = w;
+        } else if (w > max) {
+            max = w;
+        }
+    }
+
+    colno = bigno - 2 * min - max;
+    if (live[colno]) {
+        (*p)++;
+        live[colno] = 0;
+    }
 }
 
 /* Same as "record" above, except now it returns whether the colouring is in
