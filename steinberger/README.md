@@ -1,7 +1,7 @@
 
 
 
-This subdirectory contains things related to Steinbergers 4CT program.
+This subdirectory contains things related to Steinberger's 4CT program.
 
 files:
 	* `U_2822.conf`: The unavoidable set of 2822 D-reducible configurations, in
