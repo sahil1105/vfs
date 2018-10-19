@@ -353,14 +353,14 @@ stillreal(long col, long choice[8], long depth, char *live, long on)
     ntwisted = nuntwisted = 0;
     if (col < 0) {
         if (!live[-col]) {
-            return ((long) 0);
+            return (long) 0;
         }
 
         twisted[ntwisted++] = -col;
         sum[0] = col;
     } else {
         if (!live[col]) {
-            return ((long) 0);
+            return (long) 0;
         }
 
         untwisted[nuntwisted++] = sum[0] = col;
@@ -372,14 +372,14 @@ stillreal(long col, long choice[8], long depth, char *live, long on)
             b = sum[j] - c;
             if (b < 0) {
                 if (!live[-b]) {
-                    return ((long) 0);
+                    return (long) 0;
                 }
 
                 twisted[ntwisted++] = -b;
                 sum[mark] = b;
             } else {
                 if (!live[b]) {
-                    return ((long) 0);
+                    return (long) 0;
                 }
 
                 untwisted[nuntwisted++] = sum[mark] = b;
@@ -409,7 +409,7 @@ stillreal(long col, long choice[8], long depth, char *live, long on)
         }
     }
 
-    return ((long) 1);
+    return (long) 1;
 }
 
 
@@ -442,7 +442,7 @@ updatelive(char *live, long ncols, long *p)
     (void) fflush(stdout);
 
     if ((newnlive < nlive) && (newnlive > 0)) {
-        return ((long) 1);
+        return (long) 1;
     }
 
     if (!newnlive) {
@@ -451,7 +451,7 @@ updatelive(char *live, long ncols, long *p)
         (void) printf("\n\n\n                ***  Not D-reducible  ***\n");
     }
 
-    return ((long) 0);
+    return (long) 0;
 }
 
 /* Numbers edges from 1 up, so that each edge has as many later edges in
@@ -811,7 +811,7 @@ findlive(char *live, long ncodes, tp_angle angle, long power[], long extentclaim
             while (c[j] & 8) {
                 if (j >= edges - 1) {
                     printstatus(ring, ncodes, extent, extentclaim);
-                    return (ncodes - extent);
+                    return ncodes - extent;
                 }
                 c[++j] <<= 1;
             }
@@ -989,22 +989,28 @@ record(long col[], long power[], long ring, long angle[][5], char *live, long *p
 long
 inlive(long col[], long power[], long ring, char *live, long bigno)
 {
-   long weight[5], colno, i, min, max, w;
+    long weight[5], colno, i, min, max, w;
 
-   for (i = 1; i < 5; i++)
-      weight[i] = 0;
-   for (i = 1; i <= ring; i++)
-      weight[col[i]] += power[i];
-   min = max = weight[4];
-   for (i = 1; i <= 2; i++) {
-      w = weight[i];
-      if (w < min)
-	 min = w;
-      else if (w > max)
-	 max = w;
-   }
-   colno = bigno - 2 * min - max;
-   return ((long) live[colno]);
+    for (i = 1; i < 5; i++) {
+        weight[i] = 0;
+    }
+
+    for (i = 1; i <= ring; i++) {
+        weight[col[i]] += power[i];
+    }
+
+    min = max = weight[4];
+    for (i = 1; i <= 2; i++) {
+        w = weight[i];
+        if (w < min) {
+            min = w;
+        } else if (w > max) {
+            max = w;
+        }
+    }
+
+    colno = bigno - 2 * min - max;
+    return (long) live[colno];
 }
 
 
