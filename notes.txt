@@ -1,0 +1,28 @@
+
+
+
+TODO:
+ * Create log file for data analysis: two types of entry
+	 - ring size, number of colorings, number of signed matchings
+	 - the "progess-bar" type thing
+
+TODO:
+ * Goal: find things that are hard to check
+ 	* length of chains of (Steinberger slides graph of kempe chains) (page 39)
+	* try to recreate graph structure of steinberger slides ("reduction chains")
+	* output those chains somehow (graphviz)
+	* output numbering of (intermediate) ring colors?
+	* logic Program that generates 4-colorings
+	* goal?: make logic programming proof of reducibility (reduce.c as prolog-esque)
+ * Figure out what the "contract" stuff is about (C-reducibility?)
+ 	* Does reduce.c try D-reducible then C-reducible or just C-reducible contract stuff?
+ * Goal: Count number of C/D reducible configuration in different sets
+ * TODO: Split files in RSST/anc into steinberger and robertson subdirectories
+ 	* Check arXiv for robertson, google for steinberger
+	* steinberger: iiis.tsinghua.edu.cn/... (In google drive)
+
+
+Steinberger: find unavoidable set using only d-reducibility
+	* modified constants in Robertson's program, used a different unavoidable
+	  set.
+	* Check changes made by commit 0fb6cc (or something)
