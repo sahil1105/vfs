@@ -89,6 +89,9 @@ main(int argc, char *argv[])
     }
 
     for (count = 0; !ReadConf(graph, fp, NULL); count++) {
+
+        printf("Checking configuration number %ld\n", count);
+
         /* "findangles" fills in the arrays "angle", "diffangle", "sameangle" and
          * "contract" from the input "graph". "angle" will be used to compute
          * which colourings of the ring edges extend to the configuration; the
