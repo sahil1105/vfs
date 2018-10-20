@@ -7,7 +7,6 @@
 
 # TODO: Use structures instead of arrays, so things have names.
 
-
 # TODO: running './reduce steinberger/U_2822.conf' fails after 3m58.366s with
 # 'Abort trap: 6'. According to the internet, this is probably something to do
 # with an out-of-bound array index. Joy.
