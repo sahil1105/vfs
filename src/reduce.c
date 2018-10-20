@@ -44,13 +44,34 @@ typedef long tp_confmat[VERTS][DEG];
 
 /* Mock-up for how the configuration matrix would look if it wasn't just an
  * array of 390 `long`s.
+ *
+ * !!IMPORTANT NOTE!! If I do decide to go this route, extreme care must be taken
+ * regarding indices. There are many places in this code where arrays start at 1,
+ * but these structures start at 0.
+ * Possibly, I could use a union to be able to refer to both the `long`s as a
+ * header and the contents of vertex zero.
+ *
+ * And of course, `tp_confmat` is a pointer to 390 `long`s. The struct is a
+ * value. (some things need to take it by pointer)
 
-typedef struct Contract {
+ * Hmm. It appears that this `Contract` (obtained from ReadConf) is not the same
+ * as the `contract` passed to `findangles()` or related. That `contract` is
+ * `long contract[EDGES + 1]`.
+typedef struct ContractDef {
     // How many entries this contract has. Range: 0, 1, 2, 3, 4.
     long size;
-    // 2*size `long` values.
+    // 2*size `long` values. Equivalently, `size` edges.
     long entries[8];
 } Contract;
+
+typedef struct Vertex {
+    // How many neighbors this vertex has.
+    long degree;
+
+    // Minus one because DEG is the number of vertices in a free completion plus
+    // one.
+    long neighbors[DEG - 1];
+} Vertex;
 
 typedef struct ConfigurationMatrix {
     // The number of vertices in this configuration.
@@ -63,20 +84,26 @@ typedef struct ConfigurationMatrix {
     long max_cons_subset;
 
     // The contract for this configuration.
-    Contract contract;
+    ContractDef contract;
 
     // The adjacency matrix.
     // Minus one because VERTS is the number of vertices in a free completion
     // plus one. (The plus one is used to store the header)
     //
     // DEG is not minus one, because matrix[i][0] is the degree of vertex `i`.
-    long matrix[VERTS - 1][DEG];
+    // long matrix[VERTS - 1][DEG];
+    //
+    // The first `self.ring_size` vertices compose the outer ring of this
+    // configuration.
+    Vertex matrix[VERTS - 1];
 } ConfigurationMatrix;
 
 */
 
 typedef long tp_angle[EDGES][5];
 
+// `tp_edgeno` probably stands for "edge numbering".
+// Why are the dimensions for this type.
 typedef long tp_edgeno[EDGES][EDGES];
 
 /* function prototypes */
@@ -699,6 +726,7 @@ findangles(tp_confmat graph, tp_angle angle, tp_angle diffangle, tp_angle samean
     }
 
     strip(graph, edgeno);
+
     for (i = 0; i < EDGES + 1; i++) {
         contract[i] = 0;
     }
@@ -726,6 +754,7 @@ findangles(tp_confmat graph, tp_angle angle, tp_angle diffangle, tp_angle samean
         }
         contract[edgeno[u][v]] = 1;
     }
+
     for (i = 1; i <= graph[0][1]; i++) {
         if (contract[i]) {
             (void) printf("         ***  ERROR: CONTRACT IS NOT SPARSE  ***\n\n");
@@ -1102,7 +1131,7 @@ ReadConf(tp_confmat A, FILE *F, long *C)
     // * number of vertices in the configuration
     // * ring size of the configuration
     // * number of ring colourings that can be extended to the configuration
-    // * the maximum ????? subset
+    // * number of ring colourings in the maximal consistent subset
     // and then store them in A[0][0], A[0][1], A[0][2], and A[0][3], respectively.
     //
     // It appears that A[0] serves as sort of like a header/metadata?
@@ -1232,12 +1261,26 @@ ReadConf(tp_confmat A, FILE *F, long *C)
     // Verify various well-formedness conditions for the configuration.
     // TODO: Identify what those well-formedness conditions are.
 
-    /* verifying condition (1) */
+    // Condition 1:
+    // 2 <= r; r < n.
     if (r < 2 || n <= r) {
       ReadErr(1, name);
     }
 
-    /* condition (2) */
+    // Condition 2:
+    // For each vertex i:
+    // If i <= r:
+    // degree(i) >= 3 && degree(i) <= n - 1
+    // Else (i > r && i <= n):
+    // degree(i) >= 5 && degree(i) <= n - 1
+    //
+    // (Equivalently,)
+    // For each vertex i:
+    // degree(i) <= n - 1.
+    // If i is in the outer ring (i.e., i <= r):
+    // degree(i) >= 3
+    // Otherwise:
+    // degree(i) >= 5
     for (i = 1; i <= r; i++) {
         if (A[i][0] < 3 || A[i][0] >= n) {
             ReadErr(2, name);
@@ -1249,7 +1292,8 @@ ReadConf(tp_confmat A, FILE *F, long *C)
         }
     }
 
-    /* condition (3) */
+    // Condition 3:
+    // Every entry in an adjacency list is in bounds. (1 <= vert <= n)
     for (i = 1; i <= n; i++) {
         for (j = 1; j <= A[i][0]; j++) {
             if (A[i][j] < 1 || A[i][j] > n) {
@@ -1258,7 +1302,11 @@ ReadConf(tp_confmat A, FILE *F, long *C)
         }
     }
 
-    /* condition (4) */
+    // Condition 4:
+    // For vertices in the outer ring (i <= r),
+    // * The first entry of the adjacency list is the next ring vertex.
+    // * The last entry of the adjacency list is the previous ring vertex.
+    // * The other entries of the adjacency list are not ring vertices.
     for (i = 1; i <= r; i++) {
         if (A[i][1] != (i == r ? 1 : i + 1)) {
             ReadErr(4, name);
@@ -1275,7 +1323,8 @@ ReadConf(tp_confmat A, FILE *F, long *C)
         }
     }
 
-    /* condition (5) */
+    // Condition 5:
+    // The sum of the degrees of all the vertices must be 6*n - 6 - 2*r.
     for (i = 1, k = 0; i <= n; i++) {
         k += A[i][0];
     }
@@ -1284,7 +1333,11 @@ ReadConf(tp_confmat A, FILE *F, long *C)
         ReadErr(5, name);
     }
 
-    /* condition (6) */
+    // Condition 6:
+    // For vertices not in the outer ring (i > r):
+    // There are up to two edges j such that a[i][j] is not a ring vertex and
+    // a[i][j + 1] is a ring vertex. If there are two such edges, then in both
+    // cases a[i][j + 2] is not a ring vertex.
     for (i = r + 1; i <= n; i++) {
         k = 0;
         d = A[i][0];
@@ -1302,7 +1355,13 @@ ReadConf(tp_confmat A, FILE *F, long *C)
         }
     }
 
-    /* condition (7) */
+    // Condition 7:
+    // For each vertex i:
+    // There is a vertex p such that:
+    // k = A[i][j]
+    // A[i][j + 1] = A[k][p]
+    // A[k][p + 1] = i
+    // (I'm not entirely sure what this means. A diagram would be useful.)
     for (i = 1; i <= n; i++) {
         for (j = 1; j <= A[i][0]; j++) {
             if (j == A[i][0]) {
