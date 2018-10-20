@@ -1019,151 +1019,273 @@ inlive(long col[], long power[], long ring, char *live, long bigno)
 long
 ReadConf(tp_confmat A, FILE *F, long *C)
 {
-   char S[256], *t, name[256];
-   long d, i, j, k, n, r, a, p;
+    char S[256], *t, name[256];
+    long d, i, j, k, n, r, a, p;
 
-   name[0] = '\0';
-   t = name;
-   while (*t == '\0' || *t == '\n') {
-      if (fgets(name, sizeof(name), F) == NULL)
-	 return ((long) 1);
-      for (t = name; *t == ' ' || *t == '\t'; t++);
-   }
-   (void) fgets(S, sizeof(S), F);
-   /* No verts, ringsize, no extendable colourings, max cons subset */
-   if (sscanf(S, "%ld%ld%ld%ld", &A[0][0], &A[0][1], &A[0][2], &A[0][3]) != 4) {
-      (void) printf("Error on line 2 while reading %s\n", name);
-      exit(11);
-   }
-   n = A[0][0];
-   r = A[0][1];
-   if (n >= VERTS) {
-      (void) printf("%s has more than %d vertices\n", name, VERTS - 1);
-      exit(17);
-   }
-   (void) fgets(S, sizeof(S), F);	/* Contract */
-   i = sscanf(S, "%ld%ld%ld%ld%ld%ld%ld%ld%ld", &A[0][4], &A[0][5], &A[0][6], &A[0][7], &A[0][8], &A[0][9], &A[0][10], &A[0][11], &A[0][12]);
-   if (2 * A[0][4] + 1 != i) {
-      (void) printf("Error on line 3 while reading %s\n", name);
-      exit(13);
-   }
-   /* Reading adjacency list */
-   for (i = 1; i <= n; i++) {
-      (void) fgets(S, sizeof(S), F);
-      if (sscanf(S, "%ld%ld", &j, &A[i][0]) != 2 || i != j) {
-	 (void) printf("Error while reading vertex %ld of %s\n", i, name);
-	 exit(14);
-      }
-      if (A[i][0] >= DEG) {
-	 (void) printf("Vertex degree larger than %d in %s\n", DEG - 1, name);
-	 exit(14);
-      }
+    // Get the name of the configuration (max 255 characters)?
+    name[0] = '\0';
+    t = name;
+    // This loops over blank lines until it find the a non-blank character.
+    // It then stores that line in `name`.
+    while (*t == '\0' || *t == '\n') {
+        // Read one line into `name`. If this fails (because EOF or something),
+        // return 1.
+        // Note: this line may not actually contain a name; it might be blank.
+        if (fgets(name, sizeof(name), F) == NULL) {
+            return (long) 1;
+        }
 
-      for (t = S; *t < '0' || *t > '9'; t++);
-      for (; *t >= '0' && *t <= '9'; t++);
-      for (; *t < '0' || *t > '9'; t++);
-      for (; *t >= '0' && *t <= '9'; t++);
-      for (j = 1; j <= A[i][0]; j++) {
-	 if (sscanf(t, "%ld", &A[i][j]) != 1) {
-	    (void) printf("Error while reading neighbour %ld of %ld of %s\n", j, i, name);
-	    exit(15);
-	 }
-	 for (; *t < '0' || *t > '9'; t++);
-	 for (; *t >= '0' && *t <= '9'; t++);
-      }	/* j */
-   }	/* i */
+        // Search through `name` for a character that is not whitespace. If the
+        // end of the line is encountered, also break.
+        // On the next loop iteration, if `t` points to whitespace, go to the next
+        // line, otherwise, continue past this loop, without modifying `name`
+        // again.
+        for (t = name; *t == ' ' || *t == '\t'; t++)
+            ;
+    }
 
-   /* Reading coordinates */
-   if (C != NULL)
-      C[0] = n;
-   for (i = 1; i <= n;) {
-      (void) fgets(S, sizeof(S), F);
-      if (C == NULL)
-	 k = sscanf(S, "%ld%ld%ld%ld%ld%ld%ld%ld", &j, &j, &j, &j, &j, &j, &j, &j);
-      else
-	 k = sscanf(S, "%ld%ld%ld%ld%ld%ld%ld%ld", C + i, C + i + 1, C + i + 2, C + i + 3, C + i + 4, C + i + 5, C + i + 6, C + i + 7);
-      if (k == 0) {
-	 (void) printf("Error while reading coordinates of %s\n", name);
-	 exit(17);
-      }
-      i += k;
-   }	/* for i */
-   (void) fgets(S, sizeof(S), F);
-   for (t = S; *t == ' ' || *t == '\t'; t++);
-   if (*t != '\n' && *t != '\0') {
-      (void) printf("No blank line following configuration %s\n", name);
-      exit(18);
-   }
-   /* verifying condition (1) */
-   if (r < 2 || n <= r)
+    // Read one line from the file into `S` (maximum 255 characters)
+    (void) fgets(S, sizeof(S), F);
+
+    /* No verts, ringsize, no extendable colourings, max cons subset */
+    // Translation: Read from `S` the:
+    // * number of vertices in the configuration
+    // * ring size of the configuration
+    // * number of ring colourings that can be extended to the configuration
+    // * the maximum ????? subset
+    // and then store them in A[0][0], A[0][1], A[0][2], and A[0][3], respectively.
+    //
+    // It appears that A[0] serves as sort of like a header/metadata?
+    // The first vertex is stored in A[1][j].
+    if (sscanf(S, "%ld%ld%ld%ld", &A[0][0], &A[0][1], &A[0][2], &A[0][3]) != 4) {
+        (void) printf("Error on line 2 while reading %s\n", name);
+        exit(11);
+    }
+
+    n = A[0][0];
+    r = A[0][1];
+    if (n >= VERTS) {
+        (void) printf("%s has more than %d vertices\n", name, VERTS - 1);
+        exit(17);
+    }
+
+    // Read the configuration's contract from the next line.
+    // This line consists of 1, 3, 5, 7, or 9 numbers.
+    // The first number is the number of contract values.
+    // The rest of the line consists of twice as many numbers.
+    // For example, the line
+    //  0
+    // is a configuration without a contract.
+    // The line
+    //  1   12 10
+    // is a configuration with two contract numbers (I don't know how to
+    // interpret the contract.)
+    // The line
+    //  4   1 9 3 9 5 11 7 11
+    // is a configuration with eight contract numbers. (The maximum number of
+    // contract numbers)
+    (void) fgets(S, sizeof(S), F);  /* Contract */
+    i = sscanf(S, "%ld%ld%ld%ld%ld%ld%ld%ld%ld", &A[0][4], &A[0][5], &A[0][6], &A[0][7], &A[0][8], &A[0][9], &A[0][10], &A[0][11], &A[0][12]);
+    if (2 * A[0][4] + 1 != i) {
+       (void) printf("Error on line 3 while reading %s\n", name);
+       exit(13);
+    }
+
+    /* Reading adjacency list */
+    // Read the vertices and edges (specified as an adjacency list).
+    for (i = 1; i <= n; i++) {
+        // Each line is a vertex.
+        //
+        // For example, the line
+        //  7  5    2  8  9 10  1
+        // means that this is vertex number 7, and it has five neighbors:
+        // vertex 2, vertex 8, vertex 9, vertex 10, and vertex 1.
+        (void) fgets(S, sizeof(S), F);
+
+        // Read the vertex number and the degree of this vertex.
+        // The degree of vertex `i` is stored in A[i][0].
+        if (sscanf(S, "%ld%ld", &j, &A[i][0]) != 2 || i != j) {
+            (void) printf("Error while reading vertex %ld of %s\n", i, name);
+            exit(14);
+        }
+        if (A[i][0] >= DEG) {
+            (void) printf("Vertex degree larger than %d in %s\n", DEG - 1, name);
+            exit(14);
+        }
+
+        // I think this skips over the two numbers that were just parsed.
+        for (t = S; *t < '0' || *t > '9'; t++)
+            ;
+        for (; *t >= '0' && *t <= '9'; t++)
+            ;
+        for (; *t < '0' || *t > '9'; t++)
+            ;
+        for (; *t >= '0' && *t <= '9'; t++)
+            ;
+
+        // Now, read the the neighbors. Each one is an index to another vertex.
+        for (j = 1; j <= A[i][0]; j++) {
+            if (sscanf(t, "%ld", &A[i][j]) != 1) {
+                (void) printf("Error while reading neighbour %ld of %ld of %s\n", j, i, name);
+                exit(15);
+            }
+
+            // Skip over the number that was just parsed.
+            for (; *t < '0' || *t > '9'; t++)
+                 ;
+            for (; *t >= '0' && *t <= '9'; t++)
+                 ;
+        }   /* j */
+    }   /* i */
+
+    /* Reading coordinates */
+    // Read the "coordinates" for the configuration. If the parameter `C` is not
+    // NULL, write the coordinates into `C`.
+    //
+    // `ReadConf()` is only ever called once (in `main()`) and it is passed NULL
+    // for `C`. Thus, this section could probably eventually be eliminated.
+    if (C != NULL) {
+        C[0] = n;
+    }
+
+    // Read one coordinate for each vertex.
+    for (i = 1; i <= n;) {
+        (void) fgets(S, sizeof(S), F);
+        if (C == NULL) {
+            // Since `C` is NULL, discard the coordinates by writing them all into
+            // the same variable, which previously was a loop index.
+            // (but the coordinates are still read? Why?)
+            k = sscanf(S, "%ld%ld%ld%ld%ld%ld%ld%ld", &j, &j, &j, &j, &j, &j, &j, &j);
+        } else {
+            // Read (up to) eight coordinates at a time.
+            // (`k` is the number of coordinates successfully read.)
+            k = sscanf(S, "%ld%ld%ld%ld%ld%ld%ld%ld", C + i, C + i + 1, C + i + 2, C + i + 3, C + i + 4, C + i + 5, C + i + 6, C + i + 7);
+        }
+
+        if (k == 0) {
+            (void) printf("Error while reading coordinates of %s\n", name);
+            exit(17);
+        }
+
+        i += k;
+    }   /* for i */
+
+    // Ensure that the configuration is followed by a blank line.
+    (void) fgets(S, sizeof(S), F);
+    for (t = S; *t == ' ' || *t == '\t'; t++)
+        ;
+    if (*t != '\n' && *t != '\0') {
+        (void) printf("No blank line following configuration %s\n", name);
+        exit(18);
+    }
+
+    // Verify various well-formedness conditions for the configuration.
+    // TODO: Identify what those well-formedness conditions are.
+
+    /* verifying condition (1) */
+    if (r < 2 || n <= r) {
       ReadErr(1, name);
-   /* condition (2) */
-   for (i = 1; i <= r; i++)
-      if (A[i][0] < 3 || A[i][0] >= n)
-	 ReadErr(2, name);
-   for (i = r + 1; i <= n; i++)
-      if (A[i][0] < 5 || A[i][0] >= n)
-	 ReadErr(2, name);
-   /* condition (3) */
-   for (i = 1; i <= n; i++)
-      for (j = 1; j <= A[i][0]; j++)
-	 if (A[i][j] < 1 || A[i][j] > n)
-	    ReadErr(3, name);
-   /* condition (4) */
-   for (i = 1; i <= r; i++) {
-      if (A[i][1] != (i == r ? 1 : i + 1))
-	 ReadErr(4, name);
-      if (A[i][A[i][0]] != (i == 1 ? r : i - 1))
-	 ReadErr(4, name);
-      for (j = 2; j < A[i][0]; j++)
-	 if (A[i][j] <= r || A[i][j] > n)
-	    ReadErr(4, name);
-   }
-   /* condition (5) */
-   for (i = 1, k = 0; i <= n; i++)
-      k += A[i][0];
-   if (k != 6 * (n - 1) - 2 * r)
-      ReadErr(5, name);
-   /* condition (6) */
-   for (i = r + 1; i <= n; i++) {
-      k = 0;
-      d = A[i][0];
-      for (j = 1; j <= d; j++)
-	 if (A[i][j] > r && A[i][j < d ? j + 1 : 1] <= r) {
-	    k++;
-	    if (A[i][j < d - 1 ? j + 2 : j + 2 - d] <= r)
-	       k++;
-	 }
-      if (k > 2)
-	 ReadErr(6, name);
-   }
-   /* condition (7) */
-   for (i = 1; i <= n; i++)
-      for (j = 1; j <= A[i][0]; j++) {
-	 if (j == A[i][0]) {
-	    if (i <= r)
-	       continue;
-	    a = A[i][1];
-	 } else
-	    a = A[i][j + 1];
-	 k = A[i][j];
-	 for (p = 1; p < A[k][0]; p++)
-	    if (a == A[k][p] && i == A[k][p + 1])
-	       break;
-	 if (p == A[k][0] && (a != A[k][p] || i != A[k][1]))
-	    ReadErr(7, name);
-      }
-   return ((long) 0);
+    }
+
+    /* condition (2) */
+    for (i = 1; i <= r; i++) {
+        if (A[i][0] < 3 || A[i][0] >= n) {
+            ReadErr(2, name);
+        }
+    }
+    for (i = r + 1; i <= n; i++) {
+        if (A[i][0] < 5 || A[i][0] >= n) {
+            ReadErr(2, name);
+        }
+    }
+
+    /* condition (3) */
+    for (i = 1; i <= n; i++) {
+        for (j = 1; j <= A[i][0]; j++) {
+            if (A[i][j] < 1 || A[i][j] > n) {
+                ReadErr(3, name);
+            }
+        }
+    }
+
+    /* condition (4) */
+    for (i = 1; i <= r; i++) {
+        if (A[i][1] != (i == r ? 1 : i + 1)) {
+            ReadErr(4, name);
+        }
+
+        if (A[i][A[i][0]] != (i == 1 ? r : i - 1)) {
+            ReadErr(4, name);
+        }
+
+        for (j = 2; j < A[i][0]; j++) {
+            if (A[i][j] <= r || A[i][j] > n) {
+                ReadErr(4, name);
+            }
+        }
+    }
+
+    /* condition (5) */
+    for (i = 1, k = 0; i <= n; i++) {
+        k += A[i][0];
+    }
+
+    if (k != 6 * (n - 1) - 2 * r) {
+        ReadErr(5, name);
+    }
+
+    /* condition (6) */
+    for (i = r + 1; i <= n; i++) {
+        k = 0;
+        d = A[i][0];
+        for (j = 1; j <= d; j++) {
+            if (A[i][j] > r && A[i][j < d ? j + 1 : 1] <= r) {
+                k++;
+                if (A[i][j < d - 1 ? j + 2 : j + 2 - d] <= r) {
+                    k++;
+                }
+            }
+        }
+
+        if (k > 2) {
+            ReadErr(6, name);
+        }
+    }
+
+    /* condition (7) */
+    for (i = 1; i <= n; i++) {
+        for (j = 1; j <= A[i][0]; j++) {
+            if (j == A[i][0]) {
+                if (i <= r) {
+                    continue;
+                }
+
+                a = A[i][1];
+            } else {
+                a = A[i][j + 1];
+            }
+
+            k = A[i][j];
+            for (p = 1; p < A[k][0]; p++) {
+                if (a == A[k][p] && i == A[k][p + 1]) {
+                    break;
+                }
+            }
+
+            if (p == A[k][0] && (a != A[k][p] || i != A[k][1])) {
+                ReadErr(7, name);
+            }
+        }
+    }
+
+    return (long) 0;
 }/* ReadConf */
 
 void
 ReadErr(int n, char name[])
 {
-   (void) printf("Error %d while reading configuration %s\n", n, name);
-   exit(57);
+    (void) printf("Error %d while reading configuration %s\n", n, name);
+    exit(57);
 }
 
-/* End of file reduce.c */
-
-/* vim: set ts=8: */
 /* vim: set et ts=4 sw=4 sts=4: */

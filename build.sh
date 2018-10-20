@@ -4,6 +4,8 @@
 # TODO: Fix whitespace/indentation
 # (three-space indent? mixed tabs/spaces? seems legit.)
 
+# TODO: Use structures instead of arrays, so things have names.
+
 # Running time of './reduce RSST/anc/unavoidable.conf':
 # real	4m51.547s
 # user  4m24.004s
@@ -20,8 +22,6 @@
 #	where do L_42 and rules come from?
 #		L_42 is steinberger, I think. (42 rules for discharging)
 #		rules: roberson (32 rules for discharging)
-
-# TODO: For reduce.c, print out configuration number when checking.
 
 CFLAGS="-Wall -Wextra -Wundef -Wold-style-definition -Wstrict-prototypes -Wpedantic --std=c99"
 
