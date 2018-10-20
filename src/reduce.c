@@ -280,17 +280,17 @@ augment(
  * "on" is nonzero iff the matching is incident with "ring". */
 void
 checkreality(
-	long depth,
-	long *weight[8],
-	char *live,
-	char *real,
-	long *pnreal,
-	long ring,
-	long basecol,
-	long on,
-	char *pbit,
-	long *prealterm,
-	long nchar)
+    long depth,
+    long *weight[8],
+    char *live,
+    char *real,
+    long *pnreal,
+    long ring,
+    long basecol,
+    long on,
+    char *pbit,
+    long *prealterm,
+    long nchar)
 {
     long i, k, nbits, choice[8], col, parity;
     unsigned long left;
@@ -314,7 +314,7 @@ checkreality(
         col = basecol;
         parity = ring & 1;
         for (i = 1, left = k; i < depth; i++, left >>= 1) {
-            if (left & 1) {	/* i.e. if a_i=1, where k=a_1+2a_2+4a_3+... */
+            if (left & 1) { /* i.e. if a_i=1, where k=a_1+2a_2+4a_3+... */
                parity ^= 1;
                choice[i] = weight[i][1];
                col += weight[i][3];
@@ -782,11 +782,11 @@ findlive(char *live, long ncodes, tp_angle angle, long power[], long extentclaim
 {
     long j, c[EDGES], i, u, *am;
     long edges, ring, extent, bigno;
-    long forbidden[EDGES];	/* called F in the notes */
+    long forbidden[EDGES];  /* called F in the notes */
 
     ring = angle[0][1];
     edges = angle[0][2];
-    bigno = (power[ring + 1] - 1) / 2;	/* needed in "record" */
+    bigno = (power[ring + 1] - 1) / 2;  /* needed in "record" */
     c[edges] = 1;
     j = edges - 1;
     c[j] = 2;
