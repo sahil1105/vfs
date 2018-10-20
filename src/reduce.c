@@ -26,8 +26,57 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// `tp_confmat` is a type that probably stands for "Configuration Matrix".
+// Rather than doing something sensible and being a `struct`, this is just a
+// 2D array for 30x13 = 390 `long`s.
+//
+// On my machine, `sizeof(long) == 8`, but I don't know what originally was
+// intended. It's entirely possible `long` was intended to mean 32 bits
+// (`sizeof(long) == 4`).
+//
+// In addition to containing the graph of the configuration (stored as an
+// adjacency list), this also contains header information like the number of
+// vertices, the ring size, the number of colourings that extend to the
+// configuration, etc. These are stored in vertex 0, because the graph vertices
+// are numbered from 1. (For example, if tp_confmat A, A[0][0] is the number of
+// vertices in the configuration A)
 typedef long tp_confmat[VERTS][DEG];
+
+/* Mock-up for how the configuration matrix would look if it wasn't just an
+ * array of 390 `long`s.
+
+typedef struct Contract {
+    // How many entries this contract has. Range: 0, 1, 2, 3, 4.
+    long size;
+    // 2*size `long` values.
+    long entries[8];
+} Contract;
+
+typedef struct ConfigurationMatrix {
+    // The number of vertices in this configuration.
+    long num_vertices;
+    // The ring size of this configuration.
+    long ring_size;
+    // The number of colourings that can be extended to this configuration.
+    long num_extendable_colourings;
+    // The "max cons subset". I have no idea what that means.
+    long max_cons_subset;
+
+    // The contract for this configuration.
+    Contract contract;
+
+    // The adjacency matrix.
+    // Minus one because VERTS is the number of vertices in a free completion
+    // plus one. (The plus one is used to store the header)
+    //
+    // DEG is not minus one, because matrix[i][0] is the degree of vertex `i`.
+    long matrix[VERTS - 1][DEG];
+} ConfigurationMatrix;
+
+*/
+
 typedef long tp_angle[EDGES][5];
+
 typedef long tp_edgeno[EDGES][EDGES];
 
 /* function prototypes */
@@ -90,7 +139,8 @@ main(int argc, char *argv[])
 
     for (count = 0; !ReadConf(graph, fp, NULL); count++) {
 
-        printf("Checking configuration number %ld\n", count);
+        // Plus one to start counting configurations from 1.
+        printf("Checking configuration number %ld\n", count + 1);
 
         /* "findangles" fills in the arrays "angle", "diffangle", "sameangle" and
          * "contract" from the input "graph". "angle" will be used to compute
