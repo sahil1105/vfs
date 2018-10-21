@@ -40,6 +40,9 @@
 // configuration, etc. These are stored in vertex 0, because the graph vertices
 // are numbered from 1. (For example, if tp_confmat A, A[0][0] is the number of
 // vertices in the configuration A)
+//
+// The ring vertices are stored first. (That is, A[i] is a ring vertex if
+// i > 0 && i <= A[0][1])
 typedef long tp_confmat[VERTS][DEG];
 
 /* Mock-up for how the configuration matrix would look if it wasn't just an
