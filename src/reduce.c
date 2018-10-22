@@ -126,6 +126,15 @@ long inlive(long[], long[], long, char *, long);
 long ReadConf(tp_confmat, FILE *, long *);
 void ReadErr(int, char[]);
 
+// static long simatchnumber[] = {
+    // 0L, 0L, 1L, 3L, 10L, 30L, 95L, 301L, 980L, 3228L, 10797L, 36487L, 124542L, 428506L, 1485003L
+// };
+
+static long simatchnumber[] = {
+    0L, 0L, 1L, 3L, 10L, 30L, 95L, 301L, 980L, 3228L, 10797L, 36487L, 124542L, 428506L, 1485003L, 5178161L,  18155816L
+}; // jps
+
+
 
 int
 main(int argc, char *argv[])
@@ -135,10 +144,6 @@ main(int argc, char *argv[])
     tp_confmat graph;
     char *live, *real, *s;
     FILE *fp;
-    static long simatchnumber[] = {
-        0L, 0L, 1L, 3L, 10L, 30L, 95L, 301L, 980L, 3228L, 10797L, 36487L, 124542L, 428506L, 1485003L, 5178161L,  18155816L
-    }; // jps
-
     if (argc < 2) {
         s = "unavoidable.conf";
     } else {
@@ -1015,10 +1020,6 @@ checkcontract(char *live, long nlive, tp_angle diffangle, tp_angle sameangle, lo
 void
 printstatus(long ring, long totalcols, long extent, long extentclaim)
 {
-    static long simatchnumber[] = {
-        0L, 0L, 1L, 3L, 10L, 30L, 95L, 301L, 980L, 3228L, 10797L, 36487L, 124542L, 428506L, 1485003L
-    };
-
     (void) printf("\n\n   This has ring-size %ld, so there are %ld colourings total,\n",ring, totalcols);
     (void) printf("   and %ld balanced signed matchings.\n",simatchnumber[ring]);
 
