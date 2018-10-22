@@ -3,9 +3,10 @@
 .ycm_extra_conf.py
 .ycm_extra_conf.pyc
 
-## Executables produced from compiling:
+## Executables produced from compiling and debug info:
 reduce
 discharge
+*.dSYM/
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
