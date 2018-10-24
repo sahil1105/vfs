@@ -39,7 +39,7 @@ check-robertson() {
 	# ./discharge robertson/present8 robertson/unavoidable.conf robertson/rules 0 1
 	# ./discharge robertson/present9 robertson/unavoidable.conf robertson/rules 0 1
 	# ./discharge robertson/present10 robertson/unavoidable.conf robertson/rules 0 1
-	# ./discharge robertson/present11 robertson/unavoidable.conf robertson/rules 1 1
+	# ./discharge robertson/present11 robertson/unavoidable.conf robertson/rules 0 1
 }
 
 check-steinberger() {
