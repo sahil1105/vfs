@@ -7,6 +7,8 @@
 reduce
 discharge
 *.dSYM/
+# Produce as a side-effect of running 'discharge':
+outlet.et
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
