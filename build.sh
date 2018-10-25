@@ -63,9 +63,6 @@ check-both() {
 	check-steinberger
 }
 
-# TODO: Write a function that builds and runs everything, so that the entire project
-# can be run with one command.
-
 if [ $# = 0 ]; then
 	build
 else
