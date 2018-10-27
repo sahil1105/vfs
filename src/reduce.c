@@ -336,19 +336,23 @@ augment(
         for (i = lower + 1; i <= upper; i++) {
             for (j = lower; j < i; j++) {
                 weight[depth] = matchweight[i][j];
-                for (h = 1; h < 2 * r - 1; h++)
+                for (h = 1; h < 2 * r - 1; h++) {
                     newinterval[h] = interval[h];
+                }
+
                 newn = r - 1;
                 if (j > lower + 1) {
                     newn++;
                     newinterval[h++] = lower;
                     newinterval[h++] = j - 1;
                 }
+
                 if (i > j + 1) {
                     newn++;
                     newinterval[h++] = j + 1;
                     newinterval[h++] = i - 1;
                 }
+
                 augment(newn, newinterval, depth, weight, matchweight, live,
                         real, pnreal, ring, basecol, on, pbit, prealterm, nchar);
             }
@@ -382,6 +386,10 @@ checkreality(
 
     nbits = 1 << (depth - 1);
 
+    // ... I think that this repeatedly overflows *pbit and then checks for
+    // overflow to reset *pbit to 1. Ugh. Also it has to be a pointer because
+    // testmatch calls augment multiple times (across two loops), and the value
+    // of bit needs to get threaded through, apparently.
     /* k will run through all subsets of M minus the first match */
     for (k = 0; k < nbits; k++, *pbit <<= 1) {
         if (!*pbit) {

@@ -35,3 +35,8 @@ Steinberger: find unavoidable set using only d-reducibility
 	* modified constants in Robertson's program, used a different unavoidable
 	  set.
 	* Check changes made by commit 0fb6cc (or something)
+
+
+Contracts: Define in Robertson 1997, page 11..???
+	* A contract is something applicable to a free completion
+	* A contract is a set of edges (in the program, 0 to 4 edges)
