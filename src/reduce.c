@@ -83,7 +83,7 @@ typedef struct ConfigurationMatrix {
     long ring_size;
     // The number of colourings that can be extended to this configuration.
     long num_extendable_colourings;
-    // The "max cons subset". I have no idea what that means.
+    // The size of the maximal consistent subset.
     long max_cons_subset;
 
     // The contract for this configuration.
@@ -735,24 +735,32 @@ findangles(tp_confmat graph, tp_angle angle, tp_angle diffangle, tp_angle samean
     tp_edgeno edgeno;
     long neighbour[VERTS];
 
+    // Calculate the number of the edges in the graph with the formula
+    // m = 3*(n - 1) - r.
+    // Abort if there are too many edges.
     edges = 3 * graph[0][0] - 3 - graph[0][1];
     if (edges >= EDGES) {
         (void) printf("Configuration has more than %d edges\n", EDGES - 1);
         exit(20);
     }
 
+    // Number the edges of the graph.
     strip(graph, edgeno);
 
     for (i = 0; i < EDGES + 1; i++) {
         contract[i] = 0;
     }
 
+    // Assert that the contract specified in the configuration as between 0 and
+    // 4 edges.
     contract[0] = graph[0][4];  /* number of edges in contract */
     if (contract[0] < 0 || contract[0] > 4) {
         (void) printf("         ***  ERROR: INVALID CONTRACT  ***\n\n");
         exit(27);
     }
 
+    // Check that the contract specified in the configuration mentions only
+    // valid vertices. (i.e., the vertices are > 0 and less than n)
     for (i = 5; i <= 2 * contract[0] + 4; i++) {
         if (graph[0][i] < 1 || graph[0][i] > graph[0][0]) {
             (void) printf("         ***  ERROR: ILLEGAL CONTRACT  ***\n\n");
@@ -760,7 +768,13 @@ findangles(tp_confmat graph, tp_angle angle, tp_angle diffangle, tp_angle samean
         }
     }
 
+    // The last entry of the contract is the size of the maximal consistent
+    // subset?
     contract[EDGES] = graph[0][3];
+
+    // Check that the vertices of the contract actually form edges.
+    // If so, set the appropriate entry of the contract to 1.
+    // The endpoints of edge i of the contract are vertices 2*i + 3 and 2*i + 4.
     for (i = 1; i <= contract[0]; i++) {
         u = graph[0][2 * i + 3];
         v = graph[0][2 * i + 4];
@@ -771,6 +785,7 @@ findangles(tp_confmat graph, tp_angle angle, tp_angle diffangle, tp_angle samean
         contract[edgeno[u][v]] = 1;
     }
 
+    // Edges in the ring (contract[i] for i <= r) are not allowed in the contract.
     for (i = 1; i <= graph[0][1]; i++) {
         if (contract[i]) {
             (void) printf("         ***  ERROR: CONTRACT IS NOT SPARSE  ***\n\n");
@@ -786,18 +801,26 @@ findangles(tp_confmat graph, tp_angle angle, tp_angle diffangle, tp_angle samean
     diffangle[0][1] = angle[0][1] = graph[0][1];
     diffangle[0][2] = angle[0][2] = edges;
 
+    // For each vertex in the graph:
     for (v = 1; v <= graph[0][0]; v++) {
+        // For each neighbor of the vertex:
         for (h = 1; h <= graph[v][0]; h++) {
+            // If the vertex is in the ring, skip the last neighbor.
             if ((v <= graph[0][1]) && (h == graph[v][0])) {
                 continue;
             }
 
+            // i is the next neighbor, wrapping around back to the first neighbor.
             i = (h < graph[v][0]) ? h + 1 : 1;
+            // u and w are two adjacent vertices neighboring vertex v.
             u = graph[v][h];
             w = graph[v][i];
+            // a, b, and c are the edges of a triangle with vertices u, v, and w.
             a = edgeno[v][w];
             b = edgeno[u][w];
             c = edgeno[u][v];
+
+            // I don't understand the rest of this block.
 
             if (contract[a] && contract[b]) {
                 (void) printf("         ***  ERROR: CONTRACT IS NOT SPARSE  ***\n\n");
@@ -829,13 +852,16 @@ findangles(tp_confmat graph, tp_angle angle, tp_angle diffangle, tp_angle samean
     }
 
     /* checking that there is a triad */
+    // The check need only be performed for |X| = 4.
     if (contract[0] < 4) {
         return;
     }
 
+    // For each non-ring vertex:
     for (v = graph[0][1] + 1; v <= graph[0][0]; v++) {
         /* v is a candidate triad */
         for (a = 0, i = 1; i <= graph[v][0]; i++) {
+            // Count the neighbors of v that are in the contract of the configuration.
             u = graph[v][i];
             for (j = 5; j <= 12; j++) {
                 if (u == graph[0][j]) {
@@ -845,25 +871,39 @@ findangles(tp_confmat graph, tp_angle angle, tp_angle diffangle, tp_angle samean
             }
         }
 
+        // In this case, v cannot be a triad, so try the next vertex.
         if (a < 3) {
             continue;
         }
+
+        // If v has degree of at least 6, it is definitely a triad, so return.
         if (graph[v][0] >= 6) {
             return;
         }
+
+        // Record the neighbors of v in neighbor, where neighbor[i] is 1 when
+        // vertex i is a neighbor of v.
         for (u = 1; u <= graph[0][0]; u++) {
             neighbour[u] = 0;
         }
+
         for (i = 1; i <= graph[v][0]; i++) {
             neighbour[graph[v][i]] = 1;
         }
+
+        // If any vertex in the configuration's contract is not a neighbor of v,
+        // return. (Because this somehow means v is a triad?)
         for (j = 5; j <= 12; j++) {
             if (!neighbour[graph[0][j]]) {
                 return;
             }
         }
+
+        // Otherwise, try the next vertex.
     }
 
+    // A configuration with |X| = 4 must have a triad, but this one didn't, so
+    // error.
     (void) printf("         ***  ERROR: CONTRACT HAS NO TRIAD  ***\n\n");
     exit(28);
 }
