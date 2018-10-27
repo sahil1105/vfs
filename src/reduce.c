@@ -111,8 +111,8 @@ typedef long tp_edgeno[EDGES][EDGES];
 
 /* function prototypes */
 void testmatch(long, char *, long[], char *, long);
-void augment(long, long[], long, long **, long[MAXRING+1][MAXRING+1][4], char *, char *, long *, long, long, long, char *, long *, long); // jps
-void checkreality(long, long **, char *, char *, long *, long, long, long, char *, long *, long);
+void augment(long, long[], long, long **, long[MAXRING+1][MAXRING+1][4], char *, char *, long *, long, long, long, unsigned char *, long *, long); // jps
+void checkreality(long, long **, char *, char *, long *, long, long, long, unsigned char *, long *, long);
 long stillreal(long, long[], long, char *, long);
 long updatelive(char *, long, long *);
 void strip(tp_confmat, tp_edgeno);
@@ -235,7 +235,7 @@ testmatch(long ring, char *real, long power[], char *live, long nchar)
 {
     long a, b, n, interval[10], *weight[8], nreal;
     long matchweight[MAXRING + 1][MAXRING + 1][4], *mw, realterm; // jps
-    char bit;
+    unsigned char bit;
 
     /* "nreal" will be the number of balanced signed matchings such that all
      * associated colourings belong to "live"; ie the total number of nonzero
@@ -322,7 +322,7 @@ augment(
     long ring,
     long basecol,
     long on,
-    char *pbit,
+    unsigned char *pbit,
     long *prealterm,
     long nchar)
 {
@@ -377,7 +377,7 @@ checkreality(
     long ring,
     long basecol,
     long on,
-    char *pbit,
+    unsigned char *pbit,
     long *prealterm,
     long nchar)
 {
