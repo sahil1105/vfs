@@ -130,6 +130,7 @@ void ReadErr(int, char[]);
     // 0L, 0L, 1L, 3L, 10L, 30L, 95L, 301L, 980L, 3228L, 10797L, 36487L, 124542L, 428506L, 1485003L
 // };
 
+// I think the name 'simatchnumber' is derived from 'NUMBER of SIgned MATCHings'.
 static long simatchnumber[] = {
     0L, 0L, 1L, 3L, 10L, 30L, 95L, 301L, 980L, 3228L, 10797L, 36487L, 124542L, 428506L, 1485003L, 5178161L,  18155816L
 }; // jps
@@ -197,7 +198,10 @@ main(int argc, char *argv[])
         for (i = 0; i < ncodes; i++) {
             live[i] = 1;
         }
+
         /* "findlive" computes {\cal C}_0 and stores in live */
+        // This also prints out the "header" out the output displayed.
+        // (Ring size, count of colourings, extent, etc.)
         nlive = findlive(live, ncodes, angle, power, graph[0][2]);
 
         /* "real" will be an array of characters, and each bit of each
@@ -917,32 +921,48 @@ findlive(char *live, long ncodes, tp_angle angle, long power[], long extentclaim
 {
     long j, c[EDGES], i, u, *am;
     long edges, ring, extent, bigno;
+    // It appears that 'forbidden' is an array of bitsets.
+    // Thus, c(e_j) \in F_j in the paper translates to c[j] & forbidden[j].
     long forbidden[EDGES];  /* called F in the notes */
 
     ring = angle[0][1];
     edges = angle[0][2];
     bigno = (power[ring + 1] - 1) / 2;  /* needed in "record" */
+
+    // Initial state of the algorithm:
+    // c(e_m) = 1.
     c[edges] = 1;
+    // j = m - 1.
     j = edges - 1;
+    // c(e_j) = 2.
     c[j] = 2;
+    // F_j = 1 | 4
     forbidden[j] = 5;
 
     for (extent = 0;;) {
+        // Step 1:
         while (forbidden[j] & c[j]) {
+            // (i)
             c[j] <<= 1;
+            // (ii)
             while (c[j] & 8) {
+                // (a)
                 if (j >= edges - 1) {
                     printstatus(ring, ncodes, extent, extentclaim);
-                    return (ncodes - extent);
+                    return ncodes - extent;
                 }
+                // (b)
                 c[++j] <<= 1;
             }
         }
 
+        // Step 2:
         if (j == ring + 1) {
+            // Record this coloring (by removing it from live)
             record(c, power, ring, angle, live, &extent, bigno);
-            c[j] <<= 1;
 
+            // Same as (a) and (b) above.
+            c[j] <<= 1;
             while (c[j] & 8) {
                 if (j >= edges - 1) {
                     printstatus(ring, ncodes, extent, extentclaim);
@@ -951,10 +971,20 @@ findlive(char *live, long ncodes, tp_angle angle, long power[], long extentclaim
                 c[++j] <<= 1;
             }
         } else {
+            // Step 3:
+            // Step 3 in the paper is if j > ring + 1, but this is j != ring + 1.
+            // I guess that case is covered by the fact that j starts off > ring + 1
+            // and only every decreases by 1, so j == ring + 1 will not get skipped
+            // over, but that still feels sloppy.
+
+            // Decrement j.
             am = angle[--j];
+            // Set c(e_j) = 1
             c[j] = 1;
-            for (u = 0, i = 1; i <= am[0]; i++)
+            // Compute forbidden[j] for the new j.
+            for (u = 0, i = 1; i <= am[0]; i++) {
                 u |= c[am[i]];
+            }
             forbidden[j] = u;
         }
     }
@@ -1082,10 +1112,10 @@ printstatus(long ring, long totalcols, long extent, long extentclaim)
     (void) fflush(stdout);
 }
 
-/* Given a colouring specified by a 1,2,4-valued function "col", it computes
+/* Given a colouring specified by a 1,2,4-valued function "color", it computes
  * the corresponding number, checks if it is in live, and if so removes it. */
 void
-record(long col[], long power[], long ring, long angle[][5], char *live, long *p, long bigno)
+record(long color[], long power[], long ring, long angle[][5], char *live, long *extent, long bigno)
 {
     long weight[5], colno, sum, i, min, max, w;
 
@@ -1094,7 +1124,7 @@ record(long col[], long power[], long ring, long angle[][5], char *live, long *p
     }
 
     for (i = 1; i <= ring; i++) {
-        sum = 7 - col[angle[i][1]] - col[angle[i][2]];
+        sum = 7 - color[angle[i][1]] - color[angle[i][2]];
         weight[sum] += power[i];
     }
 
@@ -1110,7 +1140,7 @@ record(long col[], long power[], long ring, long angle[][5], char *live, long *p
 
     colno = bigno - 2 * min - max;
     if (live[colno]) {
-        (*p)++;
+        (*extent)++;
         live[colno] = 0;
     }
 }
