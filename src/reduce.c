@@ -103,10 +103,24 @@ typedef struct ConfigurationMatrix {
 
 */
 
+// `tp_angle` associates each edge with 5 long values.
+// Assume `tp_angle angle`.
+//
+// Header: Like tp_confmat, angle[0] is sort of like a header.
+// * angle[0][0] = count of vertices
+// * angle[0][1] = count of ring vertices
+// * angle[0][2] = count of edges
+//
+// For i > 0,
+// * angle[i][0] is the number of entries in angle[i]
+// * angle[i][j], j > 0 is the number of an edge adjacent to edge i.
 typedef long tp_angle[EDGES][5];
 
-// `tp_edgeno` probably stands for "edge numbering".
+// `tp_edgeno` stands for "edge numbering".
 // Why are the dimensions for this type.
+// ... This is indexed by *vertices*, right? That's what 'strip' says:
+// tp_edgeno edgeno; edgeno[u][v] = number assigned to the edge from u to v, or
+// zero if there is no such edge.
 typedef long tp_edgeno[EDGES][EDGES];
 
 /* function prototypes */
@@ -820,6 +834,12 @@ findangles(tp_confmat graph, tp_angle angle, tp_angle diffangle, tp_angle samean
             u = graph[v][h];
             w = graph[v][i];
             // a, b, and c are the edges of a triangle with vertices u, v, and w.
+            //     b
+            // u-------w
+            //  \     /
+            // c \   / a
+            //    \ /
+            //     v
             a = edgeno[v][w];
             b = edgeno[u][w];
             c = edgeno[u][v];
@@ -832,6 +852,8 @@ findangles(tp_confmat graph, tp_angle angle, tp_angle diffangle, tp_angle samean
             }
 
             if (a > c) {
+                // `angle[c][++angle[c][0]] = a` is an excessively terse way to
+                // say "append 'a' to 'c's entry in 'angle'".
                 angle[c][++angle[c][0]] = a;
                 if ((!contract[a]) && (!contract[b]) && (!contract[c])) {
                     diffangle[c][++diffangle[c][0]] = a;
@@ -995,6 +1017,7 @@ findlive(char *live, long ncodes, tp_angle angle, long power[], long extentclaim
 void
 checkcontract(char *live, long nlive, tp_angle diffangle, tp_angle sameangle, long contract[EDGES + 1], long power[])
 {
+    // I think this corresponds (in part) to Section 4: Contracts in [reduce.pdf]
     long j, c[EDGES], i, u, *dm, *sm;
     long ring, bigno;
     long forbidden[EDGES];  /* called F in the notes */
