@@ -580,6 +580,7 @@ strip(tp_confmat graph, tp_edgeno edgeno)
         }
     }
 
+    // Edges in the ring are numbered 1..r.
     verts = graph[0][0];
     ring = graph[0][1];
     for (v = 1; v <= ring; v++) {
@@ -592,10 +593,16 @@ strip(tp_confmat graph, tp_edgeno edgeno)
         done[v] = 0;
     }
 
+    // 'term' starts out as the number of edges in the configuration.
+    // (Using the formula `m = 3*(n - 1) - r` from Section 2.)
     term = 3 * (verts - 1) - ring;
+
+    // For vertices not in the ring:
+    /* This eventually lists all the internal edges of the configuration */
     for (x = ring + 1; x <= verts; x++) {
         /* First we find all vertices from the interior that meet the "done"
          * vertices in an interval, and write them in max[1] .. max[maxes] */
+        // Not entirely sure how this works.
         maxint = 0;
         maxes = 0;
         for (v = ring + 1; v <= verts; v++) {
@@ -611,11 +618,11 @@ strip(tp_confmat graph, tp_edgeno edgeno)
             } else if (inter == maxint) {
                 max[++maxes] = v;
             }
-        }   /* for v bracket */
+        }
 
         /* From the terms in max we choose the one of maximum degree */
+        // Select the vertex of maximum degree from 'max', and call it 'best'.
         maxdeg = 0;
-
         for (h = 1; h <= maxes; h++) {
             d = graph[max[h]][0];
             if (d > maxdeg) {
@@ -623,12 +630,16 @@ strip(tp_confmat graph, tp_edgeno edgeno)
                 best = max[h];
             }
         }
+
         /* So now, the vertex "best" will be the next vertex to be done */
+        // Process the vertex 'best'.
 
         grav = graph[best];
         d = grav[0];
         first = 1;
         previous = done[grav[d]];
+
+        // Find the first neighbor of 'best' in 'done' or 1?
         while ((previous) || (!done[grav[first]])) {
             previous = done[grav[first++]];
             if (first > d) {
@@ -637,27 +648,41 @@ strip(tp_confmat graph, tp_edgeno edgeno)
             }
         }
 
+        // Starting with 'first', label edges until the other endpoint is not done.
         for (h = first; done[grav[h]]; h++) {
+            // Label the edge with 'term'. (from both directions)
             edgeno[best][grav[h]] = term;
             edgeno[grav[h]][best] = term;
             term--;
+
             if (h == d) {
-                if (first == 1)
+                if (first == 1) {
+                    // If we started at the first neighbor, and have just hit the
+                    // last neighbor (neighbor number 'd'), we are done.
                     break;
+                }
+                // Otherwise, wrap back around the start.
+                // This wraps around to 0 because the loop increment happens
+                // immediately afterwards.
                 h = 0;
             }
         }
+
+        // Mark 'best' as done; continue to the next vertex.
         done[best] = 1;
-    }   /* for x bracket */
-    /* This eventually lists all the internal edges of the configuration */
+    }
 
     /* Now we must list the edges between the interior and the ring */
+    // For each vertex in the ring:
     for (x = 1; x <= ring; x++) {
         maxint = 0;
+
+        // This is basically the same as the 'ininterval' stuff above.
         for (v = 1; v <= ring; v++) {
             if (done[v]) {
                 continue;
             }
+
             u = (v > 1) ? v - 1 : ring;
             w = (v < ring) ? v + 1 : 1;
             inter = 3 * graph[v][0] + 4 * (done[u] + done[w]);
@@ -665,17 +690,21 @@ strip(tp_confmat graph, tp_edgeno edgeno)
                 maxint = inter;
                 best = v;
             }
-        }   /* for v bracket */
+        }
 
         grav = graph[best];
         u = (best > 1) ? best - 1 : ring;
         if (done[u]) {
+            // The previous vertex is already done. Number edges adjacent to this
+            // vertex from last to second.
             for (h = grav[0] - 1; h >= 2; h--) {
                 edgeno[best][grav[h]] = term;
                 edgeno[grav[h]][best] = term;
                 term--;
             }
         } else {
+            // The previous vertex is not already done. Number edges adjacent to
+            // this vertex from second to last.
             for (h = 2; h < grav[0]; h++) {
                 edgeno[best][grav[h]] = term;
                 edgeno[grav[h]][best] = term;
@@ -683,7 +712,7 @@ strip(tp_confmat graph, tp_edgeno edgeno)
             }
         }
         done[best] = 1;
-    }   /* for x bracket */
+    }
 }
 
 
