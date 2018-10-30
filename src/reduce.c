@@ -725,27 +725,37 @@ ininterval(long grav[], long done[])
 
     d = grav[0];
 
-    // Note: This loop is not actually useless.
-    // This exists because of the side effect 'first++'.
-    // It would be clearer if it had been written:
-    // first = 1;
-    // while ((first < d) && !done[grav[first]]) { first++; }
+    // Find the first entry in 'grav' that is not in 'done'.  (The start of the
+    // interval)
+    // Note that this does not include the last value.
     for (first = 1; (first < d) && (!done[grav[first]]); first++)
         ;
 
+    // If we didn't find a start value, 'first' equals the degree of 'grav'.
+    // If 'done[grav[d]]' is true, 'grav[d]' is an interval of length 1.
+    // If 'done[grav[d]]' is false, 'grav' has no interval.
     if (first == d) {
-        return (done[grav[d]]);
+        return done[grav[d]];
     }
 
-    // Note: A similar situation occurs here.
+    // Starting from 'first', find the last contiguous entry that is still in
+    // 'done'.
     for (last = first; (last < d) && (done[grav[last + 1]]); last++)
         ;
 
+    // Calculate the length of the interval.
     length = last - first + 1;
+
+    // If the interval stretches all the way to the end of 'grav', no other checks
+    // need to be made. Return the length of the interval.
     if (last == d) {
-        return (length);
+        return length;
     }
 
+    // Ensure that 'done' contains only one interval.
+
+    // If we did not start at the beginning of the interval, any true value in
+    // 'done' after the interval is part of a different interval, so we return 0.
     if (first > 1) {
         for (j = last + 2; j <= d; j++) {
             if (done[grav[j]]) {
@@ -756,6 +766,9 @@ ininterval(long grav[], long done[])
         return length;
     }
 
+    // If we did start at the first entry, it's possible the interval wraps around
+    // the end. Thus, we check if there are other true entries in 'done', but
+    // demand that those entries must stretch to the end of 'grav'.
     worried = 0;
     for (j = last + 2; j <= d; j++) {
         if (done[grav[j]]) {
