@@ -22,6 +22,23 @@ debug-build() {
 	CFLAGS="-g ${CFLAGS}" build
 }
 
+# Building with UBSan indicates that ring16.conf crashes because it does an
+# index out of bounds on the parameter 'weight'.
+#
+# The crash happens the first time the parameter 'depth' equals 8.
+# ('depth' is incremented each time 'augment' recurses. i.e., 'depth' is the
+# recursion depth of 'augment'.)
+#
+# Possibly a fix would be to increase the size of the 'weight' parameter?
+sanitizer-build() {
+	# List of UBSan flags:
+	# https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html#available-checks
+	#
+	# It would probably also be a good idea to enable -fsanitize=integer to catch
+	# things like integer overflow, truncation, or other things.
+	CFLAGS="-fsanitize=undefined ${CFLAGS}" build
+}
+
 clean() {
 	rm -f reduce
 	rm -rf reduce.dSYM
