@@ -29,6 +29,10 @@ TODO: Figure out why ./reduce RSST/anc/ring16.conf crashes:
 	* It's hard to figure out exactly where/why, because checkreality is called
 	  by augment. augment calls itself recursively and in a loop, making it even
 	  harder to debug.
+	* From [Steinberger09]: "The script is verified by with some very minor
+	  modfications (for example the constant specifying the maximum recursion
+	  depth needs to be incremented)."
+	  Of course, now I need to find which constant that is.
 
 
 Steinberger: find unavoidable set using only d-reducibility
