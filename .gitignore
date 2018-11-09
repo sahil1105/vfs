@@ -1,7 +1,8 @@
-## Vim editor swap files:
+## Vim editor swap files and misc.:
 *.swp
 .ycm_extra_conf.py
 .ycm_extra_conf.pyc
+notes.txt
 
 ## Executables produced from compiling and debug info:
 reduce
