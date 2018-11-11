@@ -12,10 +12,11 @@
 # with an out-of-bound array index. Joy.
 
 CFLAGS="-Wall -Wextra -Wundef -Wold-style-definition -Wstrict-prototypes -Wpedantic --std=c99"
+CC=clang
 
 build() {
-	clang $CFLAGS -o reduce src/reduce.c
-	clang $CFLAGS -o discharge src/discharge.c
+	$CC $CFLAGS -o reduce src/reduce.c
+	$CC $CFLAGS -o discharge src/discharge.c
 }
 
 debug-build() {
