@@ -37,7 +37,7 @@ sanitizer-build() {
 	#
 	# It would probably also be a good idea to enable -fsanitize=integer to catch
 	# things like integer overflow, truncation, or other things.
-	CFLAGS="-fsanitize=undefined ${CFLAGS}" build
+	CC=clang CFLAGS="-fsanitize=undefined ${CFLAGS}" build
 }
 
 clean() {
