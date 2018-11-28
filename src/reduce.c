@@ -23,6 +23,10 @@
 #define EDGES   70      /* max number of edges in a free completion + 1    */ // jps
 #define MAXRING 16      /* max ring-size */ // jps
 
+#define AUGMENT_WEIGHT_SIZE 8 // (effective) Maximum recursion depth for augment
+                              // Recursing deeper does an out-of-bound array access,
+                              // and crashes.
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -251,7 +255,7 @@ main(int argc, char *argv[])
 void
 testmatch(long ring, char *real, long power[], char *live, long nchar)
 {
-    long a, b, n, interval[10], *weight[8], nreal;
+    long a, b, n, interval[10], *weight[AUGMENT_WEIGHT_SIZE], nreal;
     long matchweight[MAXRING + 1][MAXRING + 1][4], *mw, realterm; // jps
     unsigned char bit;
 
@@ -332,7 +336,7 @@ augment(
     long n,
     long interval[10],
     long depth,
-    long *weight[8],
+    long *weight[AUGMENT_WEIGHT_SIZE],
     long matchweight[MAXRING + 1][MAXRING + 1][4],
     char *live,
     char *real,
@@ -388,7 +392,7 @@ augment(
 void
 checkreality(
     long depth,
-    long *weight[8],
+    long *weight[AUGMENT_WEIGHT_SIZE],
     char *live,
     char *real,
     long *pnreal,
@@ -399,7 +403,7 @@ checkreality(
     long *prealterm,
     long nchar)
 {
-    long i, k, nbits, choice[8], col, parity;
+    long i, k, nbits, choice[AUGMENT_WEIGHT_SIZE], col, parity;
     unsigned long left;
 
     nbits = 1 << (depth - 1);
@@ -456,7 +460,7 @@ checkreality(
  * "live", and, if so, records that fact on the bits of the corresponding
  * entries of "live". */
 long
-stillreal(long col, long choice[8], long depth, char *live, long on)
+stillreal(long col, long choice[AUGMENT_WEIGHT_SIZE], long depth, char *live, long on)
 {
     long sum[128], mark, i, j, twopower, b, c; // jps
     long twisted[128], ntwisted, untwisted[128], nuntwisted; // jps
