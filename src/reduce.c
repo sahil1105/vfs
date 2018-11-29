@@ -23,7 +23,7 @@
 #define EDGES   70      /* max number of edges in a free completion + 1    */ // jps
 #define MAXRING 16      /* max ring-size */ // jps
 
-#define AUGMENT_WEIGHT_SIZE 8 // (effective) Maximum recursion depth for augment
+#define AUGMENT_WEIGHT_SIZE 16// (effective) Maximum recursion depth for augment
                               // Recursing deeper does an out-of-bound array access,
                               // and crashes.
 
