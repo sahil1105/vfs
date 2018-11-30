@@ -11,7 +11,9 @@ This is very much work-in-progress.
 I might even want to break this into sub-documents.
 
 
-# `reduce.c`
+# Checking Reducibility
+
+This is done in the file `reduce.c`
 
 ## Data structures
 
@@ -101,7 +103,9 @@ TODO: Write about the format, and the well-formedness conditions.
 
 
 
-# `discharge.c`
+# Discharging
+
+This is done in the file `discharge.c`.
 
 ## How to Invoke
 
@@ -113,10 +117,10 @@ command would be invoked.
 
 ```bash
 $ discharge robertson/present7 robertson/unavoidble.conf robertson/rules 0 1
-#			^				   ^						 ^				 ^ ^
-#			|				   |						 |				 | |
-#			The presentation   The unavoidable set		 The rules file  | printing mode
-#			file														 line number
+#           ^                  ^                         ^               ^ ^
+#           |                  |                         |               | |
+#           The presentation   The unavoidable set       The rules file  | printing mode
+#           file                                                         line number
 ```
 
 The final two parameters need explanation, which can be found by looking at the
@@ -167,4 +171,4 @@ Four-Color Theorem, such as:
 * Robertson et al: The Four Color Theorem (1997)
 * Steinberger: An Unavoidable Set of D-Reducible Configurations (2009)
 
-<!-- vim: set tw=80: -->
+<!-- vim: set et sts=4 sw=4 tw=80: -->
