@@ -8,6 +8,8 @@ investigations of this code.
 
 This is very much work-in-progress.
 
+I might even want to break this into sub-documents.
+
 
 # `reduce.c`
 
@@ -20,7 +22,37 @@ explanation, and the fact that the size of `long` is platform-dependent.
 
 ### `tp_confmat`
 
-#### Vertex
+See section 1, "Configurations", of `RSST/reduce.pdf`.
+
+This data structure represents a configuration.
+
+Assume the declaration `tp_confmat A;` has been made.
+
+#### The header
+
+The first four values of the configuration, `A[0][0..3]` have the following
+meanings:
+
+1. `A[0][0]`: This is the number of vertices in the configuration.
+2. `A[0][1]`: This is the number of vertices in the outer ring.
+3. `A[0][2]`: The number of canonical colourings in \cal{C}(K). Apparently, this
+   is the number of colourings that can be extended to the configuration.
+4. `A[0][3]`: The number of canonical colourings in \cal{C}'(K). Apparently,
+   this is the number of colourings in the maximal consistent subset.
+
+#### The contract
+
+The values `A[0][4..13]` (inclusive) specify the "contract" of the
+configuration. This is related to C- versus D- reducibility, I believe.
+D-Reducible configurations do not need a contract.
+
+`A[0][4]` is the number of edges in the contract. The remaining values are
+between 0 and 4 edges, specified as pairs of vertices.
+
+#### Vertices
+
+The remaining rows of the matrix (`A[i]` for `i > 0`) are the vertices of the
+configuration.
 
 ### `tp_edgeno`
 
@@ -35,14 +67,17 @@ However, there are several other data structures that were not given names.
 
 A contract has two meanings in the program:
 
-1. for `tp_confmat A`, the values `A[0][5..13]`: between 0 and 4 edges (pairs of
-   vertices)
-2. An array of long values. (used as paramter to `findangles`, etc.)
+1. for `tp_confmat A`, the values `A[0][4..13]`.
+2. An array of long values. (used as paramter to `findangles`, etc.).
 
+This section discusses the latter definition.
 
 ### `simatchnumber`
 
+An array of large numbers. The name is probably derived from "[number] of
+[si]gned [match]ings".
 
+TODO: RSST vs. JPS definitions of `simatchnumber`.
 
 ## That one place with the `char`
 
