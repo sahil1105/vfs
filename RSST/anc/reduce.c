@@ -17,11 +17,16 @@
 
 /* Version 1,  8 May 1995 */
 
-#define VERTS   30	/* max number of vertices in a free completion + 1 */ // jps
-#define DEG     13	/* max degree of a vertex in a free completion + 1 */
-			/* must be at least 13 because of row 0            */
-#define EDGES   70	/* max number of edges in a free completion + 1    */ // jps
-#define MAXRING 16	/* max ring-size */ // jps
+#define VERTS   30      /* max number of vertices in a free completion + 1 */ // jps
+#define DEG     13      /* max degree of a vertex in a free completion + 1 */
+                        /* must be at least 13 because of row 0            */
+#define EDGES   70      /* max number of edges in a free completion + 1    */ // jps
+#define MAXRING 16      /* max ring-size */ // jps
+
+#define AUGMENT_WEIGHT_SIZE 16 // RN: (effective) Maximum recursion depth for augment
+                               // Recursing deeper does an out-of-bound array access,
+                               // and crashes.
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -266,8 +271,8 @@ char *live, *real, *pbit;
  * associated colourings; it is zero for matchings not incident with "ring".
  * "on" is nonzero iff the matching is incident with "ring". */
 {
-   long i, k, nbits, choice[8], col, parity;
-   unsigned long left;
+    long i, k, nbits, choice[AUGMENT_WEIGHT_SIZE], col, parity; // RN: was 8, now is 16 
+    unsigned long left;
 
    nbits = 1 << (depth - 1);
    /* k will run through all subsets of M minus the first match */
@@ -311,7 +316,7 @@ char *live, *real, *pbit;
 
 long
 stillreal(col, choice, depth, live, on)
-long col, choice[8], depth, on;
+long col, choice[AUGMENT_WEIGHT_SIZE], depth, on;  // RN: choice size was 8, now 16
 char *live;
 
 /* Given a signed matching, this checks if all associated colourings are in
