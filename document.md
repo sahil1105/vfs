@@ -251,7 +251,33 @@ shall attempt to document them here.
 (As a side note, this is a file containing configurations, not a file that
 configures something)
 
-TODO: Write about the format, and the well-formedness conditions.
+A configuration file is a series of configurations, separated by blank lines.
+The configuration file is read by the function `ReadConf()`, which is duplicated
+across `reduce.c` and `discharge.c`.
+
+The format for each configuration closely mirrors the definition of a
+configuration matrix.
+
+The first line of a configuration is the name of the configuration. The code
+does not make use of it.
+
+The next line is the header: four integers. These integers correspond exactly to
+the header of a configuration matrix.
+
+The next line is the contract. It is an integer followed by twice as many
+integers. These are read into `A[0][5..13]`, as specified in the definition of a
+configuration matrix.
+
+The next rows are the vertices. Row `i` of the vertices starts with the integer
+`i`, then the degree `d` of the vertex, then `d` integers.
+
+There are then *coordinates*, one for each vertex. The coordinates are stored 8
+to a line, but the last may have fewer. I do not understand the purpose of these
+"coordinates", especially because `reduce.c` completely ignores them.
+Furthermore, while RSST include coordinate data, Steinberger sets each
+coordinate value to 1024.
+
+Finally, a configuration must be followed by a blank line.
 
 ### Presentation File
 
