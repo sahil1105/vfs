@@ -284,4 +284,29 @@ Finally, a configuration must be followed by a blank line.
 ### Rules File
 
 
+
+
+* * *
+
+# The `augment()` crash
+
+Initially, when running `reduce` on Steinberger's unavoidable set
+(`U_2822.conf`), some machines would see the program crash with `Abort trap: 6`.
+
+This error was eventually localized to indexing the parameter `weight` of
+`augment()` out-of-bounds.
+
+The function `augment()` passes its parameters `depth` and `weight` into the
+function `checkreality()`. `checkreality()` then uses `depth` to index `weight`.
+Because `depth` is equal to the recursion depth of `augment()`, a configuration
+that caused `augment()` to recurse more than eight levels caused a
+index-out-of-bounds on `weight`, which was declared `long *weight[8]`.
+
+To fix the problem, the constant `8` in the declaration (and several other
+places) were extracted out to a constant `AUGMENT_WEIGHT_SIZE` (a better name
+would be good) and `AUGMENT_WEIGHT_SIZE` was increased from 8 to 16.
+
+Explain why it was crashing, augment recursion, `weights`, the fix.
+
+
 <!-- vim: set et sts=4 sw=4 tw=80: -->
