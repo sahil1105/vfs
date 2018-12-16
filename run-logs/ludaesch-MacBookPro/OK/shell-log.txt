@@ -1,0 +1,6 @@
+[RSST :(]$ ./run-steinberger-reduce.sh 
+
+real	96m38.914s
+user	48m15.020s
+sys	0m2.644s
+[RSST :)]$ 

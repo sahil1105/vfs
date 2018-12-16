@@ -1,0 +1,16 @@
+[anc :)]$ gcc reduce.c 
+reduce.c:10:1: warning: '/*' within block comment [-Wcomment]
+/* This is part I of two programs that serve as supplements to the paper `The
+^
+reduce.c:68:1: warning: type specifier missing, defaults to 'int' [-Wimplicit-int]
+main(argc, argv)
+^
+2 warnings generated.
+[anc :)]$ gcc reduce.c >& gcc-reduce.txt
+[anc :)]$ time ./a.out U_2822.conf > U_2822-log.txt
+Abort trap: 6
+
+real	2m58.424s
+user	2m58.213s
+sys	0m0.167s
+

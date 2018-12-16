@@ -1,0 +1,7 @@
+ludaesch@geme:~/git/vfs/RSST/anc$ time ./a.out U_2822.conf > U_2822-log.txt 
+
+real	38m28.512s
+user	38m27.068s
+sys	0m0.088s
+
+
