@@ -121,7 +121,7 @@ an alias for `A[i][0]`, the degree of vertex `i`.
 
    In this diagram, an edge labeled `j` from `i` to `k` means `A[i][j] = k`.
 
-   [Graph Demonstrating Property 7](property7.svg)
+   ![Graph Demonstrating Property 7](property7.svg)
 
 ### `tp_edgeno`
 
