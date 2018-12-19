@@ -77,7 +77,7 @@ The ring vertices are listed first, from `A[1]` to `A[A[0][1]]`.
 Each vertex is as follows:
 
 * `A[i][0]` is the number of neighbors this vertex has.
-* `A[i][j]`, `j > 0` is the index of a neighboring vertex.
+* `A[i][j]`, `j > 0` is the index of a neighboring vertex, listed clockwise.
 
 Additionally, for ring vertices,
 
@@ -88,13 +88,40 @@ Additionally, for ring vertices,
 
 `RSST/reduce.pdf` specifies 7 conditions for a well-formed configuration matrix.
 
-1. aaa
-2. bbb
-3. ccc
-4. ddd
-5. eee
-6. fff
-7. ggg
+`n` is the number of vertices, and `r` is the number of ring vertices. `d(i)` is
+an alias for `A[i][0]`, the degree of vertex `i`.
+
+1. `2 <= r < n`
+2. For ring vertices, `3 <= d(i) <= n-1`. For non-ring vertices,
+   `5 <= d(i) <= n-1`
+3. All vertex indices are in bounds (`1 <= A[i][j] <= n`)
+4. For ring vertices `i`, `A[i][1]` is the next ring vertex (`i+1`), and
+   `A[i][d(i)]` is the previous ring vertex (`i-1`). (both wrap around to
+   zero/`r`)
+5. The sum of all `d(i)` is `6*n - 6 - 2*r`
+6. For non-ring vertices, there are at most two neighbors `j` such that:
+    * `j` is not a ring vertex
+    * `j+1` is a ring vertex
+   If there are two such `j`, for both `j+2` is not a ring vertex
+7. a
+   * Let `i` be a vertex.
+   * If `i` is a ring vertex, let `j` be any neighbor index of `i` except the
+     last.
+
+   * Otherwise let `j` be any neighbor index of `i`.
+
+   * Let `k` be the vertex `A[i][j]`.
+
+   * There exists some neighbor index `p` of `k` such that
+
+    1. `A[i][j+1] == A[k][p]` (wrap around `j` if `j = d(i)`)
+    2. `A[k][p+1] == i` (wrap around `p` if `p = d(k)`)
+
+   Because this definition is still hard to understand, have a diagram.
+
+   In this diagram, an edge labeled `j` from `i` to `k` means `A[i][j] = k`.
+
+   [Graph Demonstrating Property 7](property7.svg)
 
 ### `tp_edgeno`
 
