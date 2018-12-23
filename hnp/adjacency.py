@@ -6,7 +6,7 @@ points = []
 
 with open(sys.argv[1], 'r') as f:
     for line in f:
-        ID, x, y = line.rstrip("\n").split(",")
+        ID, x, y = line.split(",")
         points.append( (float(x), float(y)) )
 
 N = len(points)
