@@ -5,6 +5,12 @@ import pprint as pp
 def map_int(L):
     return [int(e) for e in L]
 
+def conf_parse_error(C, X):
+    print('*** ERROR ***: parsed', len(C), 'configurations:')
+    pp.pprint(C)
+    print('.. but now *** CONFUSED *** about:', X)
+    raise ValueError(X)
+
 # dictionary of configurations
 CONF = {}  
 
@@ -15,12 +21,14 @@ with open(sys.argv[1], 'r') as f:
             A, *rest = L                # What attribute are we looking at? Everything else in rest .. 
             if A == 'C':   
                 ID = int(L[1])          # We have a new config here! ID defined now.. 
-                CONF[ID] = {}           # Create empty dictionary for this config.. 
-            elif A in ['R','I']:        # reducible or irreducible (or unknown??)
-                CONF[ID]['S'] = A       # 'S' is for status
+                CONF[ID] = {}           # Create empty dictionary for this config..
+                status = f.readline()   # Next line after "C <NNN>" has reducibility status: R, I, or U
+                CONF[ID]['S'] = status[0] # 'S' is for status
+                if not status[0] in ['R','I','U']:
+                    conf_parse_error(CONF, status)
             elif A in ['V','M']:
                 CONF[ID][A] = int(rest[0])   # vertex count C and mysterious M
-            elif A in ['T','HI', 'AB']:
+            elif A in ['T','HI','AB']:
                 CONF[ID][A] = map_int(rest)  # int list of all stuff after A
             elif A == 'J':
                 CONF[ID][A] = rest      # list of all stuff after A
@@ -32,10 +40,7 @@ with open(sys.argv[1], 'r') as f:
             elif A == 'U':
                 CONF[ID]['U'] = True
             else:
-                print('Parsed', len(CONF), 'configurations:')
-                pp.pprint(CONF)
-                print(' .. but now CONFUSED ABOUT ..')
-                raise ValueError(L)
+                conf_parse_error(CONF, L)
 
 print('# Read %d configurations. Here they are:' % len(CONF))           
 pp.pprint(CONF)
