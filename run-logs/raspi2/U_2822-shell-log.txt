@@ -1,0 +1,5 @@
+pi@LeoPi:~/git/vfs/RSST/anc $ time ./a.out U_2822.conf > U_2822-log.txt
+
+real	659m30.290s
+user	658m32.640s
+sys	0m53.790s

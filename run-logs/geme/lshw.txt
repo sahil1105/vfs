@@ -1,0 +1,524 @@
+geme
+    description: Desktop Computer
+    product: System Product Name (SKU)
+    vendor: System manufacturer
+    version: System Version
+    serial: System Serial Number
+    width: 64 bits
+    capabilities: smbios-3.0 dmi-3.0 vsyscall32
+    configuration: boot=normal chassis=desktop family=To be filled by O.E.M. sku=SKU uuid=6C8A74D4-A978-3B90-7E44-107B44908623
+  *-core
+       description: Motherboard
+       product: H110-PLUS
+       vendor: ASUSTeK COMPUTER INC.
+       physical id: 0
+       version: Rev X.0x
+       serial: 170706216401694
+       slot: Default string
+     *-firmware
+          description: BIOS
+          vendor: American Megatrends Inc.
+          physical id: 0
+          version: 3402
+          date: 07/05/2017
+          size: 64KiB
+          capacity: 15MiB
+          capabilities: pci apm upgrade shadowing cdboot bootselect socketedrom edd int13floppy1200 int13floppy720 int13floppy2880 int5printscreen int9keyboard int14serial int17printer acpi usb biosbootspecification uefi
+     *-memory
+          description: System Memory
+          physical id: 3d
+          slot: System board or motherboard
+          size: 16GiB
+        *-bank:0
+             description: DIMM Synchronous 2400 MHz (0.4 ns)
+             product: DDR4 2400 2OZ
+             vendor: A-DATA
+             physical id: 0
+             serial: 6F760000
+             slot: DIMM_A1
+             size: 8GiB
+             width: 64 bits
+             clock: 2400MHz (0.4ns)
+        *-bank:1
+             description: [empty]
+             physical id: 1
+             slot: DIMM_A2
+        *-bank:2
+             description: DIMM Synchronous 2400 MHz (0.4 ns)
+             product: DDR4 2400 2OZ
+             vendor: A-DATA
+             physical id: 2
+             serial: D1750000
+             slot: DIMM_B1
+             size: 8GiB
+             width: 64 bits
+             clock: 2400MHz (0.4ns)
+        *-bank:3
+             description: [empty]
+             physical id: 3
+             slot: DIMM_B2
+     *-cache:0
+          description: L1 cache
+          physical id: 43
+          slot: L1 Cache
+          size: 256KiB
+          capacity: 256KiB
+          capabilities: synchronous internal write-back unified
+          configuration: level=1
+     *-cache:1
+          description: L2 cache
+          physical id: 44
+          slot: L2 Cache
+          size: 1MiB
+          capacity: 1MiB
+          capabilities: synchronous internal write-back unified
+          configuration: level=2
+     *-cache:2
+          description: L3 cache
+          physical id: 45
+          slot: L3 Cache
+          size: 8MiB
+          capacity: 8MiB
+          capabilities: synchronous internal write-back unified
+          configuration: level=3
+     *-cpu
+          description: CPU
+          product: Intel(R) Core(TM) i7-7700 CPU @ 3.60GHz
+          vendor: Intel Corp.
+          physical id: 46
+          bus info: cpu@0
+          version: Intel(R) Core(TM) i7-7700 CPU @ 3.60GHz
+          serial: To Be Filled By O.E.M.
+          slot: LGA1151
+          size: 4073MHz
+          capacity: 4200MHz
+          width: 64 bits
+          clock: 100MHz
+          capabilities: x86-64 fpu fpu_exception wp vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch intel_pt tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp cpufreq
+          configuration: cores=4 enabledcores=4 threads=8
+     *-pci
+          description: Host bridge
+          product: Intel Corporation
+          vendor: Intel Corporation
+          physical id: 100
+          bus info: pci@0000:00:00.0
+          version: 05
+          width: 32 bits
+          clock: 33MHz
+        *-pci:0
+             description: PCI bridge
+             product: Sky Lake PCIe Controller (x16)
+             vendor: Intel Corporation
+             physical id: 1
+             bus info: pci@0000:00:01.0
+             version: 05
+             width: 32 bits
+             clock: 33MHz
+             capabilities: pci pm msi pciexpress normal_decode bus_master cap_list
+             configuration: driver=pcieport
+             resources: irq:120 ioport:e000(size=4096) memory:f6000000-f70fffff ioport:e0000000(size=301989888)
+           *-display
+                description: VGA compatible controller
+                product: NVIDIA Corporation
+                vendor: NVIDIA Corporation
+                physical id: 0
+                bus info: pci@0000:01:00.0
+                version: a1
+                width: 64 bits
+                clock: 33MHz
+                capabilities: pm msi pciexpress vga_controller bus_master cap_list rom
+                configuration: driver=nouveau latency=0
+                resources: irq:124 memory:f6000000-f6ffffff memory:e0000000-efffffff memory:f0000000-f1ffffff ioport:e000(size=128) memory:c0000-dffff
+           *-multimedia
+                description: Audio device
+                product: NVIDIA Corporation
+                vendor: NVIDIA Corporation
+                physical id: 0.1
+                bus info: pci@0000:01:00.1
+                version: a1
+                width: 32 bits
+                clock: 33MHz
+                capabilities: pm msi pciexpress bus_master cap_list
+                configuration: driver=snd_hda_intel latency=0
+                resources: irq:17 memory:f7080000-f7083fff
+        *-usb
+             description: USB controller
+             product: Sunrise Point-H USB 3.0 xHCI Controller
+             vendor: Intel Corporation
+             physical id: 14
+             bus info: pci@0000:00:14.0
+             version: 31
+             width: 64 bits
+             clock: 33MHz
+             capabilities: pm msi xhci bus_master cap_list
+             configuration: driver=xhci_hcd latency=0
+             resources: irq:121 memory:f7210000-f721ffff
+           *-usbhost:0
+                product: xHCI Host Controller
+                vendor: Linux 4.10.0-42-generic xhci-hcd
+                physical id: 0
+                bus info: usb@1
+                logical name: usb1
+                version: 4.10
+                capabilities: usb-2.00
+                configuration: driver=hub slots=10 speed=480Mbit/s
+              *-usb:0
+                   description: Keyboard
+                   product: PS/2+USB Keyboard
+                   vendor: dakai
+                   physical id: 7
+                   bus info: usb@1:7
+                   version: 3.21
+                   capabilities: usb-1.10
+                   configuration: driver=usbhid maxpower=100mA speed=2Mbit/s
+              *-usb:1
+                   description: Mouse
+                   product: USB OPTICAL MOUSE
+                   physical id: 8
+                   bus info: usb@1:8
+                   version: 1.00
+                   capabilities: usb-1.10
+                   configuration: driver=usbhid maxpower=100mA speed=2Mbit/s
+              *-usb:2 UNCLAIMED
+                   description: Generic USB device
+                   product: 802.11ac WLAN Adapter
+                   vendor: Realtek
+                   physical id: a
+                   bus info: usb@1:a
+                   version: 2.00
+                   serial: 00e04c000001
+                   capabilities: usb-2.10
+                   configuration: maxpower=500mA speed=480Mbit/s
+           *-usbhost:1
+                product: xHCI Host Controller
+                vendor: Linux 4.10.0-42-generic xhci-hcd
+                physical id: 1
+                bus info: usb@2
+                logical name: usb2
+                version: 4.10
+                capabilities: usb-3.00
+                configuration: driver=hub slots=4 speed=5000Mbit/s
+        *-communication
+             description: Communication controller
+             product: Sunrise Point-H CSME HECI #1
+             vendor: Intel Corporation
+             physical id: 16
+             bus info: pci@0000:00:16.0
+             version: 31
+             width: 64 bits
+             clock: 33MHz
+             capabilities: pm msi bus_master cap_list
+             configuration: driver=mei_me latency=0
+             resources: irq:125 memory:f722d000-f722dfff
+        *-storage
+             description: SATA controller
+             product: Sunrise Point-H SATA controller [AHCI mode]
+             vendor: Intel Corporation
+             physical id: 17
+             bus info: pci@0000:00:17.0
+             version: 31
+             width: 32 bits
+             clock: 66MHz
+             capabilities: storage msi pm ahci_1.0 bus_master cap_list
+             configuration: driver=ahci latency=0
+             resources: irq:122 memory:f7228000-f7229fff memory:f722c000-f722c0ff ioport:f050(size=8) ioport:f040(size=4) ioport:f020(size=32) memory:f722b000-f722b7ff
+        *-pci:1
+             description: PCI bridge
+             product: Sunrise Point-H PCI Express Root Port #5
+             vendor: Intel Corporation
+             physical id: 1c
+             bus info: pci@0000:00:1c.0
+             version: f1
+             width: 32 bits
+             clock: 33MHz
+             capabilities: pci pciexpress msi pm normal_decode bus_master cap_list
+             configuration: driver=pcieport
+             resources: irq:16 ioport:2000(size=4096) memory:c8000000-c81fffff ioport:c8200000(size=2097152)
+        *-pci:2
+             description: PCI bridge
+             product: Sunrise Point-H PCI Express Root Port #7
+             vendor: Intel Corporation
+             physical id: 1c.6
+             bus info: pci@0000:00:1c.6
+             version: f1
+             width: 32 bits
+             clock: 33MHz
+             capabilities: pci pciexpress msi pm normal_decode bus_master cap_list
+             configuration: driver=pcieport
+             resources: irq:18
+           *-pci
+                description: PCI bridge
+                product: ASM1083/1085 PCIe to PCI Bridge
+                vendor: ASMedia Technology Inc.
+                physical id: 0
+                bus info: pci@0000:03:00.0
+                version: 04
+                width: 32 bits
+                clock: 33MHz
+                capabilities: pci msi pm pciexpress normal_decode bus_master cap_list
+        *-pci:3
+             description: PCI bridge
+             product: Sunrise Point-H PCI Express Root Port #8
+             vendor: Intel Corporation
+             physical id: 1c.7
+             bus info: pci@0000:00:1c.7
+             version: f1
+             width: 32 bits
+             clock: 33MHz
+             capabilities: pci pciexpress msi pm normal_decode bus_master cap_list
+             configuration: driver=pcieport
+             resources: irq:19 ioport:d000(size=4096) memory:f7100000-f71fffff
+           *-network
+                description: Ethernet interface
+                product: RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller
+                vendor: Realtek Semiconductor Co., Ltd.
+                physical id: 0
+                bus info: pci@0000:05:00.0
+                logical name: enp5s0
+                version: 15
+                serial: 10:7b:44:90:86:23
+                size: 10Mbit/s
+                capacity: 1Gbit/s
+                width: 64 bits
+                clock: 33MHz
+                capabilities: pm msi pciexpress msix bus_master cap_list ethernet physical tp mii 10bt 10bt-fd 100bt 100bt-fd 1000bt 1000bt-fd autonegotiation
+                configuration: autonegotiation=on broadcast=yes driver=r8169 driverversion=2.3LK-NAPI duplex=half firmware=rtl8168h-2_0.0.2 02/26/15 latency=0 link=no multicast=yes port=MII speed=10Mbit/s
+                resources: irq:123 ioport:d000(size=256) memory:f7104000-f7104fff memory:f7100000-f7103fff
+        *-pci:4
+             description: PCI bridge
+             product: Sunrise Point-H PCI Express Root Port #9
+             vendor: Intel Corporation
+             physical id: 1d
+             bus info: pci@0000:00:1d.0
+             version: f1
+             width: 32 bits
+             clock: 33MHz
+             capabilities: pci pciexpress msi pm normal_decode bus_master cap_list
+             configuration: driver=pcieport
+             resources: irq:16 ioport:3000(size=4096) memory:c8400000-c85fffff ioport:c8600000(size=2097152)
+        *-isa
+             description: ISA bridge
+             product: Sunrise Point-H LPC Controller
+             vendor: Intel Corporation
+             physical id: 1f
+             bus info: pci@0000:00:1f.0
+             version: 31
+             width: 32 bits
+             clock: 33MHz
+             capabilities: isa bus_master
+             configuration: latency=0
+        *-memory UNCLAIMED
+             description: Memory controller
+             product: Sunrise Point-H PMC
+             vendor: Intel Corporation
+             physical id: 1f.2
+             bus info: pci@0000:00:1f.2
+             version: 31
+             width: 32 bits
+             clock: 33MHz (30.3ns)
+             configuration: latency=0
+             resources: memory:f7224000-f7227fff
+        *-multimedia
+             description: Audio device
+             product: Sunrise Point-H HD Audio
+             vendor: Intel Corporation
+             physical id: 1f.3
+             bus info: pci@0000:00:1f.3
+             version: 31
+             width: 64 bits
+             clock: 33MHz
+             capabilities: pm msi bus_master cap_list
+             configuration: driver=snd_hda_intel latency=32
+             resources: irq:126 memory:f7220000-f7223fff memory:f7200000-f720ffff
+        *-serial UNCLAIMED
+             description: SMBus
+             product: Sunrise Point-H SMBus
+             vendor: Intel Corporation
+             physical id: 1f.4
+             bus info: pci@0000:00:1f.4
+             version: 31
+             width: 64 bits
+             clock: 33MHz
+             configuration: latency=0
+             resources: memory:f722a000-f722a0ff ioport:f000(size=32)
+     *-scsi:0
+          physical id: 1
+          logical name: scsi0
+          capabilities: emulated
+        *-disk
+             description: ATA Disk
+             product: ADATA SU600
+             physical id: 0.0.0
+             bus info: scsi@0:0.0.0
+             logical name: /dev/sda
+             version: 1A
+             serial: 2H3020057022
+             size: 111GiB (120GB)
+             capabilities: gpt-1.00 partitioned partitioned:gpt
+             configuration: ansiversion=5 guid=55be18c7-2716-4ea7-bfbf-e3ec8f0f9f09 logicalsectorsize=512 sectorsize=512
+           *-volume:0
+                description: Windows FAT volume
+                vendor: MSDOS5.0
+                physical id: 1
+                bus info: scsi@0:0.0.0,1
+                logical name: /dev/sda1
+                logical name: /boot/efi
+                version: FAT32
+                serial: 320b-69de
+                size: 95MiB
+                capacity: 99MiB
+                capabilities: boot precious readonly hidden nomount fat initialized
+                configuration: FATs=2 filesystem=fat label=SYSTEM mount.fstype=vfat mount.options=rw,relatime,fmask=0077,dmask=0077,codepage=437,iocharset=iso8859-1,shortname=mixed,errors=remount-ro name=EFI system partition state=mounted
+           *-volume:1
+                description: reserved partition
+                vendor: Windows
+                physical id: 2
+                bus info: scsi@0:0.0.0,2
+                logical name: /dev/sda2
+                serial: 6c9e7eb7-c9af-48cd-a57f-3e648d7263ef
+                capacity: 15MiB
+                capabilities: nofs precious readonly hidden nomount
+                configuration: name=Microsoft reserved partition
+           *-volume:2
+                description: recovery environment
+                vendor: Windows
+                physical id: 3
+                bus info: scsi@0:0.0.0,3
+                logical name: /dev/sda3
+                serial: 6ec17205-b6ad-4ce5-9b10-58384768be21
+                capacity: 499MiB
+                capabilities: boot precious readonly hidden nomount
+                configuration: name=Basic data partition
+           *-volume:3
+                description: Windows NTFS volume
+                vendor: Windows
+                physical id: 4
+                bus info: scsi@0:0.0.0,4
+                logical name: /dev/sda4
+                version: 3.1
+                serial: 2af72ca8-dc73-b040-a0a4-c78e600df92b
+                size: 110GiB
+                capacity: 110GiB
+                capabilities: ntfs initialized
+                configuration: clustersize=4096 created=2017-04-15 06:11:41 filesystem=ntfs label=Windows modified_by_chkdsk=true mounted_on_nt4=true name=Basic data partition resize_log_file=true state=dirty upgrade_on_mount=true
+           *-volume:4
+                description: Windows NTFS volume
+                vendor: Windows
+                physical id: 5
+                bus info: scsi@0:0.0.0,5
+                logical name: /dev/sda5
+                version: 3.1
+                serial: 08f0-da09
+                size: 821MiB
+                capacity: 846MiB
+                capabilities: boot precious readonly hidden nomount ntfs initialized
+                configuration: clustersize=4096 created=2017-11-26 14:34:21 filesystem=ntfs modified_by_chkdsk=true mounted_on_nt4=true resize_log_file=true state=dirty upgrade_on_mount=true
+     *-scsi:1
+          physical id: 2
+          logical name: scsi1
+          capabilities: emulated
+        *-disk
+             description: ATA Disk
+             product: WDC WD10EZEX-60W
+             vendor: Western Digital
+             physical id: 0.0.0
+             bus info: scsi@1:0.0.0
+             logical name: /dev/sdb
+             version: 1A01
+             serial: WD-WCC6Y3DA6APV
+             size: 931GiB (1TB)
+             capabilities: gpt-1.00 partitioned partitioned:gpt
+             configuration: ansiversion=5 guid=419c8227-b885-40b1-a302-adf16f440fa1 logicalsectorsize=512 sectorsize=4096
+           *-volume:0
+                description: reserved partition
+                vendor: Windows
+                physical id: 1
+                bus info: scsi@1:0.0.0,1
+                logical name: /dev/sdb1
+                serial: 8dbf524c-13a8-440e-bac3-63318f811530
+                capacity: 127MiB
+                capabilities: nofs
+                configuration: name=Microsoft reserved partition
+           *-volume:1
+                description: Windows NTFS volume
+                vendor: Windows
+                physical id: 2
+                bus info: scsi@1:0.0.0,2
+                logical name: /dev/sdb2
+                version: 3.1
+                serial: c6b03251-61a2-d54c-b5b8-82f4709faf71
+                size: 462GiB
+                capacity: 462GiB
+                capabilities: ntfs initialized
+                configuration: clustersize=4096 created=2017-09-10 03:48:58 filesystem=ntfs label=New Volume name=Basic data partition state=clean
+           *-volume:2
+                description: Windows FAT volume
+                vendor: mkfs.fat
+                physical id: 3
+                bus info: scsi@1:0.0.0,3
+                logical name: /dev/sdb3
+                version: FAT32
+                serial: 045f-4000
+                size: 484MiB
+                capacity: 511MiB
+                capabilities: boot fat initialized
+                configuration: FATs=2 filesystem=fat name=EFI System Partition
+     *-scsi:2
+          physical id: 3
+          logical name: scsi2
+          capabilities: emulated
+        *-disk
+             description: ATA Disk
+             product: SanDisk SDSSDH35
+             physical id: 0.0.0
+             bus info: scsi@2:0.0.0
+             logical name: /dev/sdc
+             version: 4000
+             serial: 174536421593
+             size: 476GiB (512GB)
+             capabilities: gpt-1.00 partitioned partitioned:gpt
+             configuration: ansiversion=5 guid=c6b9b8d8-9658-496b-a59e-871b3391da94 logicalsectorsize=512 sectorsize=512
+           *-volume:0
+                description: Linux swap volume
+                vendor: Linux
+                physical id: 1
+                bus info: scsi@2:0.0.0,1
+                logical name: /dev/sdc1
+                version: 1
+                serial: 9acfb358-ae28-43fc-a945-3b66df1a6f2b
+                size: 14GiB
+                capacity: 15GiB
+                capabilities: nofs swap initialized
+                configuration: filesystem=swap pagesize=4095
+           *-volume:1
+                description: Windows FAT volume
+                vendor: mkfs.fat
+                physical id: 2
+                bus info: scsi@2:0.0.0,2
+                logical name: /dev/sdc2
+                version: FAT32
+                serial: b0da-a0fe
+                size: 508MiB
+                capacity: 512MiB
+                capabilities: boot fat initialized
+                configuration: FATs=2 filesystem=fat name=EFI System Partition
+           *-volume:2
+                description: EXT4 volume
+                vendor: Linux
+                physical id: 3
+                bus info: scsi@2:0.0.0,3
+                logical name: /dev/sdc3
+                logical name: /
+                version: 1.0
+                serial: 54ebc9e8-ca09-4c4f-bc6f-4c001cea11c7
+                size: 461GiB
+                capabilities: journaled extended_attributes large_files huge_files dir_nlink recover extents ext4 ext2 initialized
+                configuration: created=2017-12-24 15:43:39 filesystem=ext4 lastmountpoint=/ modified=2018-11-25 15:45:22 mount.fstype=ext4 mount.options=rw,relatime,errors=remount-ro,data=ordered mounted=2018-11-25 15:45:22 state=mounted
+  *-power UNCLAIMED
+       description: To Be Filled By O.E.M.
+       product: To Be Filled By O.E.M.
+       vendor: To Be Filled By O.E.M.
+       physical id: 1
+       version: To Be Filled By O.E.M.
+       serial: To Be Filled By O.E.M.
+       capacity: 32768mWh

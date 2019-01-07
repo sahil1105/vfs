@@ -1,0 +1,26 @@
+graph {
+
+node[fontname=helvetica color=grey fontcolor=grey fontsize=5 shape=box style=rounded width=0 height=0 penwidth=0.5]
+
+edge[penwidth=0.5 color=grey]
+1--2--3--4--5--6--1
+
+node[color=black fontcolor=black]
+
+edge[style=dotted penwidth=0.5 color=black]
+
+ 1 -- {9}
+ 2 -- {8,9}
+ 3 -- {7,8}
+ 4 -- {7}
+ 5 -- {10,7}
+ 6 -- {9,10}
+
+
+edge[style=solid penwidth=2]
+
+ 7 -- {10,8}
+ 8 -- {10,9}
+ 9 -- {10}
+
+}
