@@ -40,6 +40,10 @@ sanitizer-build() {
 	CC=clang CFLAGS="-fsanitize=undefined ${CFLAGS}" build
 }
 
+optimized-build() {
+	CFLAGS="-O3 ${CFLAGS}" build
+}
+
 clean() {
 	rm -f reduce
 	rm -rf reduce.dSYM
