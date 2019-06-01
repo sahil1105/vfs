@@ -1,0 +1,50 @@
+diff --git a/RSST/anc/reduce.c b/RSST/anc/reduce.c
+index 8f2b229..04db1da 100644
+--- a/RSST/anc/reduce.c
++++ b/RSST/anc/reduce.c
+@@ -65,6 +65,11 @@ void ReadErr();
+ #endif
+ 
+ 
++// RN: Used to instrument the reduction process to
++// see how deeply 'augment()' recurses.
++static int max_augment_depth = 0;
++
++
+ main(argc, argv)
+ int argc;
+ char *argv[];
+@@ -98,6 +103,9 @@ char *argv[];
+       exit(44);
+    }
+    for (count = 0; !ReadConf(graph, fp, NULL); count++) {
++      // RN: Reset the counter for a new reduction.
++      max_augment_depth = 0;
++
+       findangles(graph, angle, diffangle, sameangle, contract);
+       /* "findangles" fills in the arrays "angle","diffangle","sameangle" and
+        * "contract" from the input "graph". "angle" will be used to compute
+@@ -129,6 +137,8 @@ char *argv[];
+       checkcontract(live, nlive, diffangle, sameangle, contract, power);
+       /* This verifies that the set claimed to be a contract for the
+        * configuration really is. */
++
++      printf("Configuration %d: maximum augment depth was %d\n", count, max_augment_depth);
+    }
+    (void) fclose(fp);
+    free(live);
+@@ -226,6 +236,14 @@ char *live, *real, *pbit;
+ {
+    long h, i, j, r, newinterval[10], newn, lower, upper;
+ 
++   // RN: update the maximum depth attained of 'augment()'.
++   if (depth > max_augment_depth) {
++      max_augment_depth = depth;
++      printf("New deepest augment: %d\n", max_augment_depth);
++      // So that this message is printed immediately, even if we crash right afterwards.
++      fflush(stdout);
++   }
++
+    checkreality(depth, weight, live, real, pnreal, ring, basecol, on, pbit, prealterm, nchar);
+    depth++;
+    for (r = 1; r <= n; r++) {

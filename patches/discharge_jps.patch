@@ -1,0 +1,21 @@
+--- exper-base/build.sh	2019-05-16 21:27:07.000000000 -0500
++++ temp_build.sh	2019-05-21 12:08:55.000000000 -0500
+@@ -33,6 +33,18 @@
+ }
+ 
+ run_discharge() {
++  local outdir=$1
++  for n in 5 6 7 8 9 10 11; do
++    presentation_file=RSST/anc/p${n}_2822
++    configuration_file=RSST/anc/U_2822.conf
++    rules_file=RSST/anc/L_42
++    stdout_file=$outdir/discharge${n}-stdout.txt
++    stderr_file=$outdir/discharge${n}-stderr.txt
++
++    time (
++      ./discharge $presentation_file $configuration_file $rules_file 0 1
++    ) >$stdout_file 2>$stderr_file
++  done
+ }
+ 
+ record_results() {

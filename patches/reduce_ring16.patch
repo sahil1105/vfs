@@ -1,0 +1,11 @@
+--- exper-base/build.sh	2019-05-16 21:27:07.000000000 -0500
++++ temp-build.sh	2019-05-17 08:04:22.000000000 -0500
+@@ -30,6 +30,8 @@
+ }
+ 
+ run_reduce() {
++  local outdir=$1
++  time (./reduce $outdir/ring16.conf) >$outdir/reduce-stdout.txt 2>$outdir/reduce-stderr.txt
+ }
+ 
+ run_discharge() {

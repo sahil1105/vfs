@@ -1,0 +1,59 @@
+diff --git a/RSST/anc/reduce.c b/RSST/anc/reduce.c
+index 8f2b229..08c7cfb 100644
+--- a/RSST/anc/reduce.c
++++ b/RSST/anc/reduce.c
+@@ -25,6 +25,9 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ 
++#define WEIGHT_SIZE 16 // RN: Value is a best guess. Other code from JPS indicates
++		       // that WEIGHT_SIZE = 10 may work for U_2822.conf.
++
+ typedef long tp_confmat[VERTS][DEG];
+ typedef long tp_angle[EDGES][5];
+ typedef long tp_edgeno[EDGES][EDGES];
+@@ -147,7 +150,7 @@ char *live, *real;
+  * whether all associated colourings belong to "live". It writes the answers
+  * in the bits of the characters of "real". */
+ {
+-   long a, b, n, interval[10], *weight[8], nreal;
++   long a, b, n, interval[10], *weight[WEIGHT_SIZE], nreal;
+    long matchweight[MAXRING + 1][MAXRING + 1][4], *mw, realterm; // jps
+    char bit;
+ 
+@@ -214,7 +217,7 @@ char *live, *real;
+ 
+ void
+ augment(n, interval, depth, weight, matchweight, live, real, pnreal, ring, basecol, on, pbit, prealterm, nchar)
+-long n, interval[10], depth, *weight[8], matchweight[MAXRING + 1][MAXRING + 1][4], *pnreal, ring, // jps
++long n, interval[10], depth, *weight[WEIGHT_SIZE], matchweight[MAXRING + 1][MAXRING + 1][4], *pnreal, ring, // jps
+ basecol, on, *prealterm, nchar;
+ char *live, *real, *pbit;
+ 
+@@ -256,7 +259,7 @@ char *live, *real, *pbit;
+ 
+ void
+ checkreality(depth, weight, live, real, pnreal, ring, basecol, on, pbit, prealterm, nchar)
+-long depth, *weight[8], *pnreal, ring, basecol, on, *prealterm, nchar;
++long depth, *weight[WEIGHT_SIZE], *pnreal, ring, basecol, on, *prealterm, nchar;
+ char *live, *real, *pbit;
+ 
+ /* For a given matching M, it runs through all signings, and checks which of
+@@ -266,7 +269,7 @@ char *live, *real, *pbit;
+  * associated colourings; it is zero for matchings not incident with "ring".
+  * "on" is nonzero iff the matching is incident with "ring". */
+ {
+-   long i, k, nbits, choice[8], col, parity;
++   long i, k, nbits, choice[WEIGHT_SIZE], col, parity;
+    unsigned long left;
+ 
+    nbits = 1 << (depth - 1);
+@@ -311,7 +314,7 @@ char *live, *real, *pbit;
+ 
+ long
+ stillreal(col, choice, depth, live, on)
+-long col, choice[8], depth, on;
++long col, choice[WEIGHT_SIZE], depth, on;
+ char *live;
+ 
+ /* Given a signed matching, this checks if all associated colourings are in
