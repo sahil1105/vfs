@@ -4,7 +4,7 @@
 .ycm_extra_conf.pyc
 notes.txt
 presentation-notes.txt
-ReproducibilityTest.md
+# ReproducibilityTest.md
 
 ## Executables produced from compiling and debug info:
 reduce
