@@ -1,4 +1,4 @@
-/* reduce.c */
+/* reduce-unpatched.c */
 /************/
 
 /* This is a modified version of the program 'reduce.c' by N. Robertson,
@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define WEIGHT_SIZE 16 // RN: Value is a best guess. Other code from JPS indicates
+#define WEIGHT_SIZE 8 // RN: Value is a best guess. Other code from JPS indicates
 		       // that WEIGHT_SIZE = 10 may work for U_2822.conf.
 
 typedef long tp_confmat[VERTS][DEG];
@@ -106,6 +106,10 @@ char *argv[];
       exit(44);
    }
    for (count = 0; !ReadConf(graph, fp, NULL); count++) {
+
+      // SG: Print the Configuration/Iteration Number
+      printf("\n\nConfiguration %d\n", count);
+
       // RN: Reset the counter for a new reduction.
       max_augment_depth = 0;
 
@@ -141,10 +145,9 @@ char *argv[];
       /* This verifies that the set claimed to be a contract for the
        * configuration really is. */
 
-      // RN: Record the augment depth, if it is interesting
-      if (max_augment_depth >= 8) {
-         printf("Configuration %d: augment depth %d >= 8 (would crash if not patched)\n", count, max_augment_depth);
-      }
+      // SG: Record the augment depth
+      printf("Configuration %d: maximum augment depth was %d\n\n\n", count, max_augment_depth);
+      printf("------------------------------------------------");
    }
    (void) fclose(fp);
    free(live);
