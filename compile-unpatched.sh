@@ -7,7 +7,7 @@ EOF
 
 main() {
   local outdir=$1;
-  source compile.sh $outdir RSST/anc/reduce-unpatched.c
+  source compile.sh $outdir reduce-src-files/reduce-unpatched.c
   add_version_notes $outdir
 }
 
