@@ -11,7 +11,7 @@ build() {
   # The compiled executables are placed at the repository root so that we do not
   # commit many executables to GitHub.
 
-  cp reduce_src $outdir/reduce.c
+  cp $reduce_src $outdir/reduce.c
   #
   # We generate a shell script instead of directly issuing commands so that
   # the compile commands are recorded.

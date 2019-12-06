@@ -147,7 +147,7 @@ char *argv[];
 
       // SG: Record the augment depth
       printf("Configuration %d: maximum augment depth was %d\n\n\n", count, max_augment_depth);
-      printf("------------------------------------------------");
+      printf("------------------------------------------------\n");
    }
    (void) fclose(fp);
    free(live);
