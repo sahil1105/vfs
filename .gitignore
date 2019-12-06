@@ -1,4 +1,6 @@
 *.DS_Store
+*.ipynb_checkpoints
+.idea/*
 
 ## Vim editor swap files and misc.:
 *.swp
