@@ -839,7 +839,7 @@ printstatus(ring, totalcols, extent, extentclaim)
 long ring, totalcols, extent, extentclaim;
 
 {
-   static long simatchnumber[] = {0L, 0L, 1L, 3L, 10L, 30L, 95L, 301L, 980L, 3228L, 10797L, 36487L, 124542L, 428506L, 1485003L};
+   static long simatchnumber[] = {0L, 0L, 1L, 3L, 10L, 30L, 95L, 301L, 980L, 3228L, 10797L, 36487L, 124542L, 428506L, 1485003L, 5178161L,  18155816L};
 
    (void) printf("\n\n   This has ring-size %ld, so there are %ld colourings total,\n",ring, totalcols);
    (void) printf("   and %ld balanced signed matchings.\n",simatchnumber[ring]);
