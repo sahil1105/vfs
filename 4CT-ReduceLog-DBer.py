@@ -1,8 +1,17 @@
+
+# coding: utf-8
+
+# In[1]:
+
+
 import re
 import sqlite3
 import os
 import sys
 from functools import reduce
+
+
+# In[2]:
 
 
 def partition(l, p):
@@ -11,6 +20,9 @@ def partition(l, p):
 def get_numbers_in_line(l):
     fmt = r'\d+'
     return list(map(int, re.findall(fmt, l)))
+
+
+# In[3]:
 
 
 class ReduceLogParser:
@@ -119,6 +131,10 @@ class ReduceLogParser:
         segments = ReduceLogParser.get_segments(lines)
         return list(map(ReduceLogParser.parse_config_verification, segments))
 
+
+# In[4]:
+
+
 class ConfigParser:
     DEFAULT_CONFIG_FILE = 'config.conf'
 
@@ -218,6 +234,9 @@ class ConfigParser:
         return ConfigParser.parse_configs_from_file(fname)
 
 
+# In[5]:
+
+
 class MetaDataParser:
 
     DEFAULT_COMPILER_INFO_FILE = 'cc.txt'
@@ -257,9 +276,10 @@ class MetaDataParser:
     @staticmethod
     def parse_version_notes(exp_dir):
         return MetaDataParser.parse_file(os.path.join(exp_dir, MetaDataParser.DEFAULT_VERSION_NOTES_FILE))
-
+            
+    
     @staticmethod
-    def extract_run_info(exp_dir):
+    def extract_run_info(exp_dir, exp_name=None):
 
         return {
             'compile_time_sys': MetaDataParser.parse_compile_time_system_details(exp_dir),
@@ -268,6 +288,8 @@ class MetaDataParser:
             'notes': MetaDataParser.parse_version_notes(exp_dir),
         }
 
+
+# In[6]:
 
 
 class SqliteHandler:
@@ -287,6 +309,7 @@ class SqliteHandler:
 
     create_run_table_sql = """ CREATE TABLE IF NOT EXISTS run (
                                             runID integer NOT NULL,
+                                            run_name text,
                                             compile_time_sys text,
                                             run_time_sys text,
                                             compiler text,
@@ -486,10 +509,11 @@ class SqliteHandler:
             SqliteHandler.insert_in_table(conn, 'progress', kv_s)
 
     @staticmethod
-    def insert_into_run_table(conn, run_info, run_id):
+    def insert_into_run_table(conn, run_info, run_id, run_name):
 
         run_info = run_info.copy()
         run_info['runID'] = run_id
+        run_info['run_name'] = run_name
         SqliteHandler.insert_in_table(conn, 'run', run_info)
 
     @staticmethod
@@ -503,12 +527,45 @@ class SqliteHandler:
         return conn
 
 
+# In[7]:
+
 
 def add_config_indices_to_reduce_log(reduce_log, config_indices):
     return list(map(lambda x: (x[0],*x[1]), zip(config_indices, reduce_log)))
 
 
-def process_exp_dir(exp_dir, db_name, config_set=None):
+# In[8]:
+
+
+def get_run_name(exp_dir, exp_name=None):
+    if exp_name:
+        return exp_name
+    else:
+        if exp_dir[-1] == '/':
+            exp_dir = exp_dir[:-1]
+        return os.path.basename(exp_dir)
+
+
+# In[9]:
+
+
+def initialize_config_table(db_name):
+    file_configSet_map = {
+        os.path.join('config-files', 'JPS-2822.conf'): 'JPS',
+        os.path.join('config-files', 'RSST-unavoidable.conf'): 'RSST',
+    }
+    conn = SqliteHandler.setup_sqlite_db(db_name)
+    for config_f, config_set in file_configSet_map.items():
+        config_descs = ConfigParser.parse_configs_from_file(config_f)
+        config_indices = SqliteHandler.insert_and_get_config_indices(conn, config_descs, config_set)
+    conn.commit()
+    conn.close()
+
+
+# In[10]:
+
+
+def process_exp_dir(exp_dir, db_name, exp_name=None, config_set=None):
     conn = SqliteHandler.setup_sqlite_db(db_name)
     
     config_descs = ConfigParser.parse_configs_from_exp_dir(exp_dir)
@@ -517,22 +574,35 @@ def process_exp_dir(exp_dir, db_name, config_set=None):
     
     log_db = ReduceLogParser.parse_reduce_log(exp_dir)
     log_db = add_config_indices_to_reduce_log(log_db, config_indices)
-    run_info = MetaDataParser.extract_run_info(exp_dir)
+    run_info = MetaDataParser.extract_run_info(exp_dir, exp_name)
     
     run_id = SqliteHandler.get_next_run_id(conn)
+    run_name = get_run_name(exp_dir, exp_name)
     SqliteHandler.insert_into_reduceLog_table(conn, log_db, run_id)
     SqliteHandler.insert_into_progress_table(conn, log_db, run_id)
-    SqliteHandler.insert_into_run_table(conn, run_info, run_id)
+    SqliteHandler.insert_into_run_table(conn, run_info, run_id, run_name)
     
     conn.commit()
     conn.close()
 
 
-if len(sys.argv) < 3:
-    print("Not enough arguments provided")
-    exit(0)
-process_exp_dir(sys.argv[1], sys.argv[2])
+if __name__ == "__main__":
+    
+    if len(sys.argv) < 3:
+        print("""Not enough arguments provided. Provide experiment directory (required), database name (required), experiment name to use in database (optional, folder name used if not provided) and name of configuration set (optional), in that order.""")
+        exit(0)
 
+    exp_dir = sys.argv[1]
+    db_name = sys.argv[2]
+    exp_name = sys.argv[3] if len(sys.argv) >= 4 else None
+    config_set = sys.argv[4] if len(sys.argv) >= 5 else None
+
+    try:
+        initialize_config_table(db_name)
+    except:
+        print("Couldn't initialize database with known configuration sets.")
+
+    process_exp_dir(exp_dir, db_name, exp_name, config_set)
 
 
 
