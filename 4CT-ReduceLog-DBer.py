@@ -104,11 +104,14 @@ class ReduceLogParser:
             config_lines = config_lines[:-1]
 
         l1, l2, l3, _, _, *l4, l5 = config_lines
-
+        
         l4, l4_r = partition(l4, lambda l: re.match(r'^\*\*', l) is None)
         l5 = l4_r + [l5]
         l5 = "\n".join(l5)
-
+        
+        if (re.match(r'^This has ring-size', l1) is None) or (re.match(r'^\*\*', l5) is None):
+            return None, None, None, None, [], [], "CRASHED", augment_depth
+        
         [ring_size, n_col] = get_numbers_in_line(l1)
         [sima] = get_numbers_in_line(l2)
         [ncol_x] = get_numbers_in_line(l3)
@@ -129,7 +132,9 @@ class ReduceLogParser:
         with open(fname, 'r') as f:
             lines = list(map(str.strip, f.readlines()))
         segments = ReduceLogParser.get_segments(lines)
-        return list(map(ReduceLogParser.parse_config_verification, segments))
+        parsed_segments = list(map(ReduceLogParser.parse_config_verification, segments))
+        crashed, parsed_segments = partition(parsed_segments, lambda l: l[6] == 'CRASHED')
+        return parsed_segments, len(crashed) > 0
 
 
 # In[4]:
@@ -499,21 +504,27 @@ class SqliteHandler:
 
                 SqliteHandler.insert_in_table(conn, 'progress', kv_s)
 
-            kv_s = {
-                'runID': run_id,
-                'configIndex': configIndex,
-                'round': n,
-                'ncol_i': ncol_iter_log[n - 1],
-            }
+            if n > 1:
+                kv_s = {
+                    'runID': run_id,
+                    'configIndex': configIndex,
+                    'round': n,
+                    'ncol_i': ncol_iter_log[n - 1],
+                }
 
             SqliteHandler.insert_in_table(conn, 'progress', kv_s)
 
     @staticmethod
-    def insert_into_run_table(conn, run_info, run_id, run_name):
+    def insert_into_run_table(conn, run_info, run_id, run_name, crashed=False):
 
         run_info = run_info.copy()
         run_info['runID'] = run_id
         run_info['run_name'] = run_name
+        if crashed:
+            if 'notes' not in run_info:
+                run_info['notes'] = ''
+            run_info['notes'] += '\nCRASHED'
+
         SqliteHandler.insert_in_table(conn, 'run', run_info)
 
     @staticmethod
@@ -567,27 +578,31 @@ def initialize_config_table(db_name):
 
 def process_exp_dir(exp_dir, db_name, exp_name=None, config_set=None):
     conn = SqliteHandler.setup_sqlite_db(db_name)
-    
+
     config_descs = ConfigParser.parse_configs_from_exp_dir(exp_dir)
     config_indices = SqliteHandler.insert_and_get_config_indices(conn, config_descs, config_set)
     conn.commit()
-    
-    log_db = ReduceLogParser.parse_reduce_log(exp_dir)
+    log_db, crashed = ReduceLogParser.parse_reduce_log(exp_dir)
     log_db = add_config_indices_to_reduce_log(log_db, config_indices)
     run_info = MetaDataParser.extract_run_info(exp_dir, exp_name)
-    
-    run_id = SqliteHandler.get_next_run_id(conn)
-    run_name = get_run_name(exp_dir, exp_name)
-    SqliteHandler.insert_into_reduceLog_table(conn, log_db, run_id)
-    SqliteHandler.insert_into_progress_table(conn, log_db, run_id)
-    SqliteHandler.insert_into_run_table(conn, run_info, run_id, run_name)
-    
-    conn.commit()
-    conn.close()
+
+    try:
+        run_id = SqliteHandler.get_next_run_id(conn)
+        run_name = get_run_name(exp_dir, exp_name)
+        SqliteHandler.insert_into_reduceLog_table(conn, log_db, run_id)
+        SqliteHandler.insert_into_progress_table(conn, log_db, run_id)
+        SqliteHandler.insert_into_run_table(conn, run_info, run_id, run_name, crashed)
+#     except Exception as e:
+#         print(e)
+    finally:
+        conn.commit()
+        conn.close()
+
+
 
 
 if __name__ == "__main__":
-    
+
     if len(sys.argv) < 3:
         print("""Not enough arguments provided. Provide experiment directory (required), database name (required), experiment name to use in database (optional, folder name used if not provided) and name of configuration set (optional), in that order.""")
         exit(0)
@@ -603,7 +618,4 @@ if __name__ == "__main__":
         print("Couldn't initialize database with known configuration sets.")
 
     process_exp_dir(exp_dir, db_name, exp_name, config_set)
-
-
-
 
