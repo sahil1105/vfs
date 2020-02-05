@@ -1,0 +1,77 @@
+* [32m92754dd [31m(Robert J Nagel)[34m[Fri Nov 30 19:53:49 2018] [m[Docs] here have some docs
+* [32m145eefa [31m(Robert J Nagel)[34m[Fri Nov 30 15:00:13 2018] [m[Docs] Fix diagram
+* [32mb11ddc6 [31m(Robert J Nagel)[34m[Fri Nov 30 14:56:40 2018] [m[Docs] More documentation
+* [32m89e18ce [31m(Robert J Nagel)[34m[Fri Nov 30 14:10:36 2018] [m[Docs] Create a document documenting things about this code
+| * [32m8e3d82e [31m(Robert J Nagel)[34m[Wed Nov 28 18:12:12 2018] [mCreate experiment
+|/  
+* [32me4ee3ec [31m(Robert J Nagel)[34m[Wed Nov 28 18:08:56 2018] [m[reduce.c] Increase value of AUGMENT_WEIGHT_SIZE
+* [32md3d5355 [31m(Robert J Nagel)[34m[Wed Nov 28 08:02:40 2018] [m[reduce.c] 8 -> AUGMENT_WEIGHT_SIZE
+* [32m4e81abd [31m(Robert J Nagel)[34m[Fri Nov 16 07:53:18 2018] [m[build.sh] Sanitizer build always with clang
+* [32m8135517 [31m(Robert J Nagel)[34m[Sun Nov 11 08:58:34 2018] [m[build.sh] Create variable to set C compiler
+* [32mc535b12 [31m(Robert J Nagel)[34m[Fri Nov 9 09:00:27 2018] [mRemove my personal notes from tracking
+| * [32mf33e7ba [31m(Robert J Nagel)[34m[Fri Nov 16 08:41:51 2018] [mAcutally use the correct file this time
+| * [32m9db1652 [31m(Robert J Nagel)[34m[Fri Nov 16 08:38:30 2018] [mRecord output from running
+| * [32m05ad07d [31m(Robert J Nagel)[34m[Sun Nov 11 15:14:17 2018] [mRemove personal notes from tracking
+| * [32m7f444ad [31m(Robert J Nagel)[34m[Sun Nov 11 15:09:01 2018] [mSet compiler with variable
+| * [32m4aa3f2c [31m(Robert J Nagel)[34m[Wed Nov 7 08:12:07 2018] [mCreate experiment
+|/  
+* [32m1d4cab6 [31m(Robert J Nagel)[34m[Fri Nov 2 11:44:32 2018] [mAdd note
+*   [32m909b2ab [31m(Robert J Nagel)[34m[Wed Oct 31 20:14:07 2018] [mFix merge conflict
+|\  
+| * [32m5001766 [31m(Robert J Nagel)[34m[Wed Oct 31 13:58:40 2018] [m[build.sh] Add function to build with UBSan
+* | [32m585d998 [31m(Robert J Nagel)[34m[Wed Oct 31 13:58:40 2018] [m[build.sh] Add function to build with UBSan
+|/  
+* [32m9d21723 [31m(Robert J Nagel)[34m[Tue Oct 30 07:07:00 2018] [m[reduce.c] Add comments to 'ininterval'
+* [32m20a50ba [31m(Robert J Nagel)[34m[Sun Oct 28 21:33:08 2018] [m[reduce.c] Add comments to 'strip'
+* [32m2c7ad20 [31m(Robert J Nagel)[34m[Sun Oct 28 08:59:25 2018] [m[reduce.c] More notes (tp_angle; findangles)
+* [32mf29db63 [31m(Robert J Nagel)[34m[Sat Oct 27 18:13:45 2018] [m[reduce.c] Add comments to 'findlive'
+* [32mbe5f844 [31m(Robert J Nagel)[34m[Sat Oct 27 12:42:45 2018] [m[reduce.c] Add comments to 'findangles'; partial comprehension
+* [32m5845cd5 [31m(Robert J Nagel)[34m[Sat Oct 27 08:56:56 2018] [mDelete a file that should not have been committed
+* [32md75d190 [31m(Robert J Nagel)[34m[Fri Oct 26 21:31:12 2018] [m[reduce.c] Replace use of char with unsigned char
+* [32m0cbbb52 [31m(Robert J Nagel)[34m[Fri Oct 26 21:23:28 2018] [m[reduce.c] Notes & comment
+* [32mfe99369 [31m(Robert J Nagel)[34m[Thu Oct 25 09:46:02 2018] [mDelete a finished TODO
+* [32ma17a6ab [31m(Robert J Nagel)[34m[Wed Oct 24 08:44:33 2018] [mPreliminary testing of discharging for Robertson
+* [32m6faec09 [31m(Robert J Nagel)[34m[Wed Oct 24 08:32:46 2018] [mFix typo
+* [32mb8e8233 [31m(Robert J Nagel)[34m[Mon Oct 22 14:09:08 2018] [mDeduplicate simatchnumber[] and some notes
+* [32m1c0f273 [31m(Robert J Nagel)[34m[Mon Oct 22 13:37:02 2018] [mDon't track debug info
+* [32m8bc3651 [31m(Robert J Nagel)[34m[Sun Oct 21 16:45:18 2018] [mExtract crashing configuration for faster testing
+* [32mff006d1 [31m(Robert J Nagel)[34m[Sun Oct 21 16:38:24 2018] [mAdd a comment about placement of ring vertices
+* [32mf45858a [31m(Robert J Nagel)[34m[Sat Oct 20 12:03:45 2018] [m[reduce.c] Add comments regarding confmat well-formed conditions
+*   [32m7140745 [31m(Robert J Nagel)[34m[Fri Oct 19 21:09:28 2018] [mFix some merge conflicts
+|\  
+| * [32m20832a0 [31m(Robert J Nagel)[34m[Fri Oct 19 20:22:44 2018] [m[reduce.c] Clean up 'ReadConf'
+* | [32m801bce3 [31m(Robert J Nagel)[34m[Fri Oct 19 21:06:20 2018] [mAdd notes/documentation to tp_confmat
+* | [32ma447834 [31m(Robert J Nagel)[34m[Fri Oct 19 21:05:00 2018] [mAdd some commands to run everything
+* | [32me9c9b09 [31m(Robert J Nagel)[34m[Fri Oct 19 20:25:20 2018] [mRemove the final few tabs in reduce.c
+* | [32md895f5f [31m(Robert J Nagel)[34m[Fri Oct 19 20:22:44 2018] [m[reduce.c] Clean up 'ReadConf'
+|/  
+* [32m6f3345d [31m(Robert J Nagel)[34m[Fri Oct 19 14:02:09 2018] [m[reduce.c] Clean up 'inlive' and remove parentheses
+* [32m0e0c4bf [31m(Robert J Nagel)[34m[Fri Oct 19 13:59:58 2018] [mFix typo
+* [32me0c71f8 [31m(Robert J Nagel)[34m[Fri Oct 19 13:59:35 2018] [m[reduce.c] Clean up 'record'
+* [32m0351652 [31m(Robert J Nagel)[34m[Fri Oct 19 13:56:00 2018] [mReorganize source files
+* [32m1f87ee5 [31m(Robert J Nagel)[34m[Fri Oct 19 13:32:39 2018] [mPrint configuration number for each configuration
+* [32m553c82e [31m(Robert J Nagel)[34m[Fri Oct 19 11:33:25 2018] [mNotes and TODOs
+* [32m03a22b8 [31m(Robert J Nagel)[34m[Fri Oct 19 09:39:01 2018] [mMinimal configuration set for testing purposes
+* [32m9aef81a [31m(Robert J Nagel)[34m[Thu Oct 18 13:27:41 2018] [m[reduce.c] Clean up 'printstatus'
+* [32m8589644 [31m(Robert J Nagel)[34m[Thu Oct 18 08:45:30 2018] [m[reduce.c] Clean up 'checkcontract'
+* [32m52ab0a1 [31m(Robert J Nagel)[34m[Thu Oct 18 08:38:42 2018] [m[reduce.c] Clean up 'findlive'
+* [32mac17e2d [31m(Robert J Nagel)[34m[Thu Oct 18 08:16:26 2018] [m[reduce.c] Clean up 'findangles'
+* [32m4906c2e [31m(Robert J Nagel)[34m[Thu Oct 18 08:08:09 2018] [mReduce energy of comment
+* [32m12573ce [31m(Robert J Nagel)[34m[Wed Oct 17 21:37:49 2018] [m[reduce.c] Clean up 'ininterval'
+* [32m0f0ce3a [31m(Robert J Nagel)[34m[Wed Oct 17 20:53:13 2018] [m[reduce.c] Clean up 'strip'
+* [32ma210a4f [31m(Robert J Nagel)[34m[Wed Oct 17 18:37:36 2018] [m[reduce.c] Clean up 'updatelive'
+* [32m2734ea3 [31m(Robert J Nagel)[34m[Wed Oct 17 18:34:26 2018] [m[reduce.c] Clean up 'stillreal'
+* [32m6a14ccc [31m(Robert J Nagel)[34m[Wed Oct 17 18:29:17 2018] [m[reduce.c] Clean up 'checkreality'
+* [32m40f18e8 [31m(Robert J Nagel)[34m[Wed Oct 17 16:47:20 2018] [mTake note of time to run reduce.c
+* [32m3a1e78f [31m(Robert J Nagel)[34m[Wed Oct 17 16:39:29 2018] [m[reduce.c] Clean up 'augment'
+* [32meecc064 [31m(Robert J Nagel)[34m[Wed Oct 17 16:31:57 2018] [m[reduce.c] Clean up 'testmatch'
+* [32mfafe8ef [31m(Robert J Nagel)[34m[Wed Oct 17 16:18:01 2018] [m[reduce.c] Clean up whitespace in 'main'
+* [32m679dc14 [31m(Robert J Nagel)[34m[Wed Oct 17 15:34:29 2018] [mAdd braces to fix warning
+* [32mea75106 [31m(Robert J Nagel)[34m[Wed Oct 17 15:18:08 2018] [mConvert old-style definitions to standard definitions
+* [32m71f8043 [31m(Robert J Nagel)[34m[Wed Oct 17 15:17:14 2018] [mIgnore more editor files
+* [32m786f775 [31m(Robert J Nagel)[34m[Wed Oct 17 12:37:24 2018] [mStub for README and more warning flags
+* [32m9f64d54 [31m(Robert J Nagel)[34m[Wed Oct 17 10:24:24 2018] [mWarning flags, fix two warnings
+* [32m91c6b39 [31m(Robert J Nagel)[34m[Wed Oct 17 09:18:16 2018] [mAdd build script and ignore some files
+* [32m0fb6cc2 [31m(Bertram Ludaescher)[34m[Tue Apr 10 04:47:24 2018] [mupdated C files from [Steinberger2010]
+* [32mcef562a [31m(Bertram Ludaescher)[34m[Tue Apr 10 04:20:13 2018] [mincludes initial C files from [RSST97]
+* [32m3bde50d [31m(Bertram Ludaescher)[34m[Sun Apr 8 13:30:12 2018] [mInitial commit

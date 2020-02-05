@@ -1,0 +1,9 @@
+[src :(]$ ls
+U_2822-log.txt	discharge.c	gcc-log.txts	git-lgs.log	uname-a.txt
+a.out		discharge.pas	gcc-v.txt	reduce.c
+[src :)]$ time ./a.out ../steinberger/U_2822.conf  >& U_2822-log.txt
+
+real	221m53.610s
+user	49m30.993s
+sys	0m4.433s
+[src :)]$ 

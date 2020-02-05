@@ -1,0 +1,6 @@
+pi@LeoPi:~/git/vfs $ time src/a.out steinberger/U_2822.conf &> reduce-log.txt 
+
+real	849m7.578s
+user	849m1.060s
+sys	0m4.800s
+

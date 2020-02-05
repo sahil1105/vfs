@@ -521,7 +521,7 @@ class SqliteHandler:
         run_info['runID'] = run_id
         run_info['run_name'] = run_name
         if crashed:
-            if 'notes' not in run_info:
+            if ('notes' not in run_info) or (run_info['notes'] is None):
                 run_info['notes'] = ''
             run_info['notes'] += '\nCRASHED'
 
