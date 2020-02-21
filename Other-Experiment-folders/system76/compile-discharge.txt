@@ -1,0 +1,41 @@
+RSST/anc/discharge.c:157:1: warning: return type defaults to ‘int’ [-Wimplicit-int]
+ main(ac, av)
+ ^~~~
+RSST/anc/discharge.c: In function ‘main’:
+RSST/anc/discharge.c:186:14: warning: implicit declaration of function ‘strcpy’ [-Wimplicit-function-declaration]
+       (void) strcpy(fname, "present7");
+              ^~~~~~
+RSST/anc/discharge.c:186:14: warning: incompatible implicit declaration of built-in function ‘strcpy’
+RSST/anc/discharge.c:186:14: note: include ‘<string.h>’ or provide a declaration of ‘strcpy’
+RSST/anc/discharge.c:197:14: warning: incompatible implicit declaration of built-in function ‘strcpy’
+       (void) strcpy(fname, av[1]);
+              ^~~~~~
+RSST/anc/discharge.c:197:14: note: include ‘<string.h>’ or provide a declaration of ‘strcpy’
+RSST/anc/discharge.c:219:34: warning: format ‘%d’ expects argument of type ‘int’, but argument 2 has type ‘long unsigned int’ [-Wformat=]
+       (void) printf("Allocating %d bytes for axles, %d bytes for sym\n",
+                                 ~^
+                                 %ld
+RSST/anc/discharge.c:219:54: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘long unsigned int’ [-Wformat=]
+       (void) printf("Allocating %d bytes for axles, %d bytes for sym\n",
+                                                     ~^
+                                                     %ld
+RSST/anc/discharge.c: At top level:
+RSST/anc/discharge.c:831:1: warning: return type defaults to ‘int’ [-Wimplicit-int]
+ Reduce(A, lineno, print)
+ ^~~~~~
+RSST/anc/discharge.c: In function ‘Reduce’:
+RSST/anc/discharge.c:852:60: warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘long unsigned int’ [-Wformat=]
+   (void) fprintf(stderr, "Insufficient memory. Additional %d KBytes needed\n", (int) CONFS * sizeof(tp_question) / 1024);
+                                                           ~^
+                                                           %ld
+RSST/anc/discharge.c:857:74: warning: format ‘%d’ expects argument of type ‘int’, but argument 2 has type ‘long unsigned int’ [-Wformat=]
+   (void) printf("Not enough memory to store unavoidable set. Additional %d KBytes needed.\n", (int) CONFS * sizeof(tp_confmat) / 1024);
+                                                                         ~^
+                                                                         %ld
+RSST/anc/discharge.c: At top level:
+RSST/anc/discharge.c:1835:1: warning: return type defaults to ‘int’ [-Wimplicit-int]
+ RootedSubConf(degree, adjmat, question, image, x, y, clockwise)
+ ^~~~~~~~~~~~~
+RSST/anc/discharge.c:1887:1: warning: return type defaults to ‘int’ [-Wimplicit-int]
+ SubConf(adjmat, degree, question, edgelist, image)
+ ^~~~~~~

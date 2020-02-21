@@ -1,0 +1,3 @@
+RSST/anc/reduce.c:68:1: warning: return type defaults to ‘int’ [-Wimplicit-int]
+ main(argc, argv)
+ ^~~~
